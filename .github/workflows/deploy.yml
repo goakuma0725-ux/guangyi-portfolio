@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     name: Build and FTP deploy
@@ -22,6 +25,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Shrink oversized source images
+        run: node scripts/shrink-source-images.mjs
+
+      - name: Commit shrunk images (if any)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add src/content/works
+            git commit -m "Auto-shrink oversized source images [skip ci]"
+            git push
+          fi
+
       - name: Build
         run: npm run build
 
@@ -32,7 +48,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ./domains/nerdibility.com/public_html/
+          server-dir: ./
           dangerous-clean-slate: true
           exclude: |
             **/.git*
