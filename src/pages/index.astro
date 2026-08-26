@@ -9,7 +9,7 @@ const allWorks = (await getCollection('works')).sort((a, b) => a.data.order - b.
 const featured = allWorks.filter((w) => w.data.featured);
 ---
 
-<BaseLayout lang="zh-Hant" path="/" title={`${site.name} ｜ ${site.taglineZh}`} description={site.introZh}>
+<BaseLayout lang="zh-Hant" path="/" title={`${site.name} STUDIO HIKARI ｜ ${site.taglineZh}`} description={site.introZh}>
   <h1 class="sr-only">{site.name}</h1>
   <Carousel works={featured} lang="zh-Hant" />
   <div class="mx-auto max-w-[1600px] px-5 md:px-10">
