@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Accordion from '../components/Accordion.astro';
+import strings_zh from '../i18n/zh.json';
+import { site } from '../config/site';
+
+const t = strings_zh;
+const entries = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+const items = entries.map((e) => ({ question: e.data.question, answerHtml: e.data.answer, category: e.data.category }));
+const categories = [...new Set(entries.map((e) => e.data.category))];
+---
+
+<BaseLayout lang="zh-Hant" path="/faq" title={`${t.faq.title} ｜ ${site.name}`} description={site.introZh}>
+  <div class="px-5 py-8 md:px-10">
+    <h1 style="font-size:32px">{t.faq.title}</h1>
+    <p class="font-mono-label mt-2" style="color:var(--ink-mid)">{t.faq.subtitle}</p>
+
+    <div class="mt-8 grid gap-10 md:grid-cols-[160px_1fr]">
+      <nav class="font-mono-label hidden flex-col gap-3 md:flex" style="font-size:11px">
+        {categories.map((c, i) => (
+          <span class="flex items-center gap-2" style={i === 0 ? 'color:var(--accent)' : 'color:var(--ink-mid)'}>
+            {i === 0 && <span class="h-1 w-1 rounded-full" style="background:var(--accent)" />}
+            {c}
+          </span>
+        ))}
+      </nav>
+      <div class="max-w-[70ch]">
+        <Accordion items={items} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

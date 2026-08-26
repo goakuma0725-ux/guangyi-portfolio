@@ -1,0 +1,163 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  works: CollectionEntry<'works'>[];
+  lang: 'zh-Hant' | 'en';
+}
+
+const { works, lang } = Astro.props;
+const prefix = lang === 'en' ? '/en' : '';
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{works.length > 0 && (
+  <section data-carousel class="relative h-[60vh] w-full overflow-hidden bg-[var(--ink)]" aria-roledescription="carousel" tabindex="0">
+    <div data-track class="flex h-full transition-transform duration-500 ease-out" style={`width:${works.length * 100}%`}>
+      {works.map((work, i) => {
+        const title = (lang === 'en' && work.data.title_en) || work.data.title;
+        const domainLabel = work.data.domain.join(' · ');
+        return (
+          <a
+            href={`${prefix}/works/${work.id}`}
+            class="work-media relative h-full shrink-0"
+            style={`width:${100 / works.length}%`}
+            data-slide
+            aria-hidden={i === 0 ? 'false' : 'true'}
+          >
+            <Image
+              src={work.data.cover}
+              alt={`${title} ${domainLabel}`}
+              width={1920}
+              height={1152}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'auto'}
+              decoding="async"
+              draggable="false"
+              class="h-full w-full object-cover"
+            />
+            <span class="font-mono-label absolute bottom-4 left-4 text-white/90 md:bottom-6 md:left-6">
+              {title} · {domainLabel}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+
+    {works.length > 1 && (
+      <div class="absolute bottom-4 right-4 flex items-center gap-3 rounded-full bg-black/40 px-3 py-2 backdrop-blur-sm md:bottom-6 md:right-6" data-pager>
+        <button type="button" data-carousel-prev aria-label="Previous slide" class="grid h-6 w-6 place-items-center text-white/80 hover:text-white">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2.5L4.5 7L9 11.5" stroke="currentColor" stroke-width="1.4" /></svg>
+        </button>
+        <div class="font-mono-label flex items-center gap-2 text-white/80">
+          <span data-counter-current>{pad(1)}</span>
+          <div class="h-[2px] w-12 bg-white/25">
+            <div data-progress class="h-full bg-[var(--accent)]" style="width:0%"></div>
+          </div>
+          <span>{pad(works.length)}</span>
+        </div>
+        <button type="button" data-carousel-next aria-label="Next slide" class="grid h-6 w-6 place-items-center text-white/80 hover:text-white">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2.5L9.5 7L5 11.5" stroke="currentColor" stroke-width="1.4" /></svg>
+        </button>
+      </div>
+    )}
+  </section>
+)}
+
+<script>
+  function pad(n: number) {
+    return String(n).padStart(2, '0');
+  }
+
+  function initCarousel(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    if (!track || slides.length < 2) return;
+    const progress = root.querySelector<HTMLElement>('[data-progress]');
+    const counter = root.querySelector<HTMLElement>('[data-counter-current]');
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-carousel-next]');
+    const DURATION = 6000;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let paused = false;
+    let raf: number;
+    let start = performance.now();
+
+    function render() {
+      track.style.transform = `translateX(-${index * (100 / slides.length)}%)`;
+      slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== index)));
+      if (counter) counter.textContent = pad(index + 1);
+    }
+
+    function goTo(next: number) {
+      index = (next + slides.length) % slides.length;
+      render();
+      if (progress) progress.style.width = '0%';
+      start = performance.now();
+    }
+
+    function tick(now: number) {
+      if (!paused && progress) {
+        const elapsed = now - start;
+        progress.style.width = `${Math.min(100, (elapsed / DURATION) * 100)}%`;
+        if (elapsed >= DURATION) goTo(index + 1);
+      } else if (paused && progress) {
+        start = now - (parseFloat(progress.style.width || '0') / 100) * DURATION;
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    if (!reduceMotion) raf = requestAnimationFrame(tick);
+
+    root.addEventListener('mouseenter', () => (paused = true));
+    root.addEventListener('mouseleave', () => (paused = false));
+    prevBtn?.addEventListener('click', () => goTo(index - 1));
+    nextBtn?.addEventListener('click', () => goTo(index + 1));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') goTo(index - 1);
+      if (e.key === 'ArrowRight') goTo(index + 1);
+    });
+
+    // swipe / drag to advance — clicking a slide still opens the work unless a real swipe happened
+    let startX = 0;
+    let dragging = false;
+    let swiped = false;
+
+    function onStart(x: number) {
+      startX = x;
+      dragging = true;
+      paused = true;
+    }
+    function onEnd(x: number) {
+      if (!dragging) return;
+      dragging = false;
+      paused = false;
+      const dx = x - startX;
+      if (Math.abs(dx) > 40) {
+        swiped = true;
+        goTo(index + (dx < 0 ? 1 : -1));
+      }
+    }
+
+    root.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+    root.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientX), { passive: true });
+    root.addEventListener('mousedown', (e) => onStart(e.clientX));
+    window.addEventListener('mouseup', (e) => onEnd(e.clientX));
+
+    root.addEventListener(
+      'click',
+      (e) => {
+        if (swiped) {
+          e.preventDefault();
+          swiped = false;
+        }
+      },
+      true
+    );
+
+    render();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
+</script>

@@ -1,0 +1,95 @@
+backend:
+  name: github
+  repo: [您的GitHub帳號]/guangyi-portfolio # 例如: goakuma0725/guangyi-portfolio
+  branch: main
+  base_url: [您的CloudflareWorker網址] # sveltia-cms-auth 的 Worker 網址,不含 /callback
+  auth_endpoint: callback
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "works"
+    label: "作品管理 (Works)"
+    label_singular: "作品"
+    folder: "src/content/works"
+    create: true
+    slug: "{{slug}}"
+    format: "frontmatter"
+    fields:
+      - { label: "案名 (Title)", name: "title", widget: "string" }
+      - { label: "英文案名 (Title EN)", name: "title_en", widget: "string", required: false }
+      - label: "領域 (Domain)"
+        name: "domain"
+        widget: "select"
+        multiple: true
+        options: ["建築設計", "工程模擬", "室內設計", "景觀模擬", "產品模擬"]
+      - label: "服務 (Service)"
+        name: "service"
+        widget: "select"
+        multiple: true
+        options: ["靜態透視圖", "動畫", "模擬分析", "BIM"]
+      - { label: "年份 (Year)", name: "year", widget: "number", required: false, value_type: "int" }
+      - { label: "封面圖 (Cover)", name: "cover", widget: "image" }
+      - { label: "白模圖 (Clay - 選填)", name: "cover_clay", widget: "image", required: false, hint: "命名建議 cover_clay.jpg,用於卡片 hover 對照效果" }
+      - label: "作品圖庫 (Gallery)"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "圖片", name: "src", widget: "image" }
+      - label: "影片 (Video - 選填)"
+        name: "video"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "影片路徑或外部連結 (YouTube/Vimeo)", name: "src", widget: "string" }
+          - { label: "封面 Poster", name: "poster", widget: "image", required: false }
+      - { label: "首頁輪播推薦 (Featured)", name: "featured", widget: "boolean", default: false }
+      - { label: "排序 (Order,數字小的在前)", name: "order", widget: "number", default: 0, value_type: "int" }
+
+  - name: "faq"
+    label: "常見問題 (FAQ)"
+    label_singular: "問答"
+    folder: "src/content/faq"
+    create: true
+    slug: "{{fields.order}}-{{slug}}"
+    format: "frontmatter"
+    fields:
+      - { label: "分類 (Category)", name: "category", widget: "string", hint: "例如:流程、檔案與交付、著作權、急件處理" }
+      - { label: "分類 EN", name: "category_en", widget: "string", required: false }
+      - { label: "問題 (Question)", name: "question", widget: "string" }
+      - { label: "問題 EN", name: "question_en", widget: "string", required: false }
+      - { label: "答案 (Answer)", name: "answer", widget: "text" }
+      - { label: "答案 EN", name: "answer_en", widget: "text", required: false }
+      - { label: "排序 (Order)", name: "order", widget: "number", default: 0, value_type: "int" }
+
+  - name: "config"
+    label: "全站設定 (Site Config)"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - name: "general"
+        label: "基本資訊"
+        file: "src/data/site.json"
+        fields:
+          - { label: "中文標語", name: "taglineZh", widget: "string" }
+          - { label: "英文標語", name: "taglineEn", widget: "string" }
+          - { label: "中文簡介", name: "introZh", widget: "text" }
+          - { label: "英文簡介", name: "introEn", widget: "text" }
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "市話", name: "phone", widget: "string" }
+          - { label: "手機", name: "mobile", widget: "string" }
+          - { label: "LINE ID", name: "lineId", widget: "string" }
+          - { label: "LINE 連結", name: "lineUrl", widget: "string" }
+          - { label: "地址 (中文)", name: "addressZh", widget: "string" }
+          - { label: "地址 (英文)", name: "addressEn", widget: "string" }
+          - { label: "統一編號", name: "taxId", widget: "string", required: false }
+          - { label: "作品集 PDF 連結", name: "portfolioPdf", widget: "string" }
+          - label: "社群連結"
+            name: "social"
+            widget: "object"
+            fields:
+              - { label: "Instagram", name: "instagram", widget: "string", required: false }
+              - { label: "Facebook", name: "facebook", widget: "string", required: false }
+              - { label: "Behance", name: "behance", widget: "string", required: false }

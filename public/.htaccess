@@ -1,0 +1,39 @@
+# Studio Hikari — Hostinger / LiteSpeed
+# 部署後若更新未顯示,先到 hPanel 的 LiteSpeed Cache 介面按「Flush All」。
+
+RewriteEngine On
+
+# 強制 HTTPS + 統一 www(如不需要 www,把下面兩行的 www\. 判斷式換成相反邏輯)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
+
+# 自訂 404
+ErrorDocument 404 /404.html
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # 帶 hash 的靜態資源(Astro 建置輸出的 _astro/ 檔案、圖片、字體)可長快取
+  <FilesMatch "\.(css|js|avif|webp|jpg|jpeg|png|svg|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # HTML 與 sitemap 不快取,確保發佈後立即可見
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "sitemap.*\.xml$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

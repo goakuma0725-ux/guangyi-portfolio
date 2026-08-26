@@ -1,0 +1,218 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WorkCard from './WorkCard.astro';
+import WorksLightbox from './WorksLightbox.astro';
+import strings_zh from '../i18n/zh.json';
+import strings_en from '../i18n/en.json';
+import { DOMAINS, DOMAIN_LABELS_EN } from '../config/site';
+
+interface Props {
+  works: CollectionEntry<'works'>[];
+  lang: 'zh-Hant' | 'en';
+}
+
+const { works, lang } = Astro.props;
+const t = lang === 'en' ? strings_en : strings_zh;
+
+function domainLabel(value: string) {
+  if (lang !== 'en') return value;
+  return DOMAIN_LABELS_EN[value as never] ?? value;
+}
+
+const domainCounts = DOMAINS.map((d) => works.filter((w) => w.data.domain.includes(d)).length);
+// Service stays part of the data model (frontmatter + CMS field) but isn't a
+// second visible filter axis — the Stitch visual mockups only show one row
+// of domain tags, so the UI here follows that.
+---
+
+<section>
+  <div
+    data-filter-bar
+    class="font-mono-label sticky top-[57px] z-30 grid grid-cols-1 items-center gap-x-6 gap-y-2 border-b bg-[var(--paper)]/95 py-4 backdrop-blur-sm md:top-[73px] md:grid-cols-[auto_1fr_auto]"
+    style="border-color:var(--hairline)"
+  >
+    <span style="color:var(--ink-mid)">{t.filter.sectionLabel}</span>
+    <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+      <button type="button" data-axis="domain" data-value="" class="filter-btn" aria-pressed="true">
+        {t.filter.all} <span data-count class="tag-count">{works.length}</span>
+      </button>
+      {DOMAINS.map((d, i) => (
+        <button type="button" data-axis="domain" data-value={d} class="filter-btn">
+          {domainLabel(d)} <span data-count class="tag-count">{domainCounts[i]}</span>
+        </button>
+      ))}
+    </div>
+    <button type="button" data-clear class="justify-self-start underline decoration-[var(--hairline)] hover:[color:var(--accent)] md:justify-self-end">
+      {t.filter.clear}
+    </button>
+  </div>
+
+  <div data-works-grid class="grid grid-cols-2 gap-3 py-3 md:grid-cols-3 lg:grid-cols-4">
+    {works.map((work) => <WorkCard work={work} lang={lang} />)}
+  </div>
+
+  <p data-empty-state hidden class="py-16 text-center" style="color:var(--ink-mid)">
+    {t.filter.empty}
+    <button type="button" data-clear class="ml-2 underline hover:[color:var(--accent)]">{t.filter.clear}</button>
+  </p>
+</section>
+
+<WorksLightbox lang={lang} />
+
+<style>
+  .filter-btn {
+    color: var(--ink-mid);
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+  }
+  .filter-btn[aria-pressed='true'] {
+    color: var(--ink);
+    font-weight: 600;
+    border-bottom-color: var(--accent);
+  }
+  .filter-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .tag-count {
+    color: var(--ink-mid);
+    font-weight: 400;
+    font-size: 10px;
+    vertical-align: super;
+  }
+  :global(.work-card) {
+    transition: opacity 200ms ease;
+  }
+</style>
+
+<script>
+  function init(section: Element) {
+    const grid = section.querySelector('[data-works-grid]')!;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.work-card'));
+    const emptyState = section.querySelector<HTMLElement>('[data-empty-state]')!;
+    const buttons = Array.from(section.querySelectorAll<HTMLButtonElement>('.filter-btn'));
+    const clearBtns = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-clear]'));
+
+    type Axis = 'domain' | 'service';
+    type State = { domain: string[]; service: string[] };
+
+    function parseQuery(): State {
+      const params = new URLSearchParams(location.search);
+      return {
+        domain: (params.get('domain') || '').split(',').filter(Boolean),
+        service: (params.get('service') || '').split(',').filter(Boolean),
+      };
+    }
+
+    let state = parseQuery();
+
+    function cardMatches(card: HTMLElement, s: State) {
+      const d = (card.dataset.domain || '').split(',');
+      const sv = (card.dataset.service || '').split(',');
+      const domainOk = s.domain.length === 0 || s.domain.some((v) => d.includes(v));
+      const serviceOk = s.service.length === 0 || s.service.some((v) => sv.includes(v));
+      return domainOk && serviceOk;
+    }
+
+    // Count for a single tag ignores what else is selected within the SAME axis
+    // (sibling selections don't inflate each other's counts, matching the spec's
+    // static example where per-domain counts sum to the total) but still respects
+    // the OTHER axis's active filter.
+    function countForTag(axis: Axis, value: string) {
+      const trial: State = { domain: state.domain, service: state.service };
+      trial[axis] = [value];
+      return cards.filter((c) => cardMatches(c, trial)).length;
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      if (state.domain.length) params.set('domain', state.domain.join(','));
+      if (state.service.length) params.set('service', state.service.join(','));
+      const qs = params.toString();
+      history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+    }
+
+    function countWithAxisCleared(axis: Axis) {
+      const trial: State = { domain: [...state.domain], service: [...state.service] };
+      trial[axis] = [];
+      return cards.filter((c) => cardMatches(c, trial)).length;
+    }
+
+    function updateButtons() {
+      buttons.forEach((btn) => {
+        const axis = btn.dataset.axis as Axis;
+        const value = btn.dataset.value || '';
+        const isAll = value === '';
+        const active = isAll ? state[axis].length === 0 : state[axis].includes(value);
+        btn.setAttribute('aria-pressed', String(active));
+        const count = isAll ? countWithAxisCleared(axis) : countForTag(axis, value);
+        const countEl = btn.querySelector('[data-count]');
+        if (countEl) countEl.textContent = String(count);
+        btn.disabled = !isAll && count === 0 && !active;
+      });
+    }
+
+    let hideTimer: ReturnType<typeof setTimeout>;
+
+    function render(animate: boolean) {
+      updateURL();
+      let visible = 0;
+      clearTimeout(hideTimer);
+      cards.forEach((c) => {
+        const match = cardMatches(c, state);
+        if (match) {
+          c.hidden = false;
+          c.style.opacity = '1';
+          visible++;
+        } else if (animate) {
+          c.style.opacity = '0';
+        } else {
+          c.hidden = true;
+          c.style.opacity = '0';
+        }
+      });
+      if (animate) {
+        hideTimer = setTimeout(() => {
+          cards.forEach((c) => {
+            if (!cardMatches(c, state)) c.hidden = true;
+          });
+        }, 200);
+      }
+      emptyState.hidden = visible !== 0;
+      updateButtons();
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        const axis = btn.dataset.axis as Axis;
+        const value = btn.dataset.value || '';
+        if (value === '') {
+          state[axis] = [];
+        } else {
+          const arr = state[axis];
+          const idx = arr.indexOf(value);
+          if (idx === -1) arr.push(value);
+          else arr.splice(idx, 1);
+        }
+        render(true);
+      });
+    });
+
+    clearBtns.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        state = { domain: [], service: [] };
+        render(true);
+      })
+    );
+
+    window.addEventListener('popstate', () => {
+      state = parseQuery();
+      render(true);
+    });
+
+    render(false);
+  }
+
+  document.querySelectorAll('section:has([data-works-grid])').forEach(init);
+</script>

@@ -1,0 +1,109 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  work: CollectionEntry<'works'>;
+  lang: 'zh-Hant' | 'en';
+}
+
+const { work, lang } = Astro.props;
+const title = (lang === 'en' && work.data.title_en) || work.data.title;
+const domainLabel = work.data.domain.join(' · ');
+const alt = `${title} ${domainLabel}`;
+
+const video = work.data.video;
+const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.src);
+---
+
+<button
+  type="button"
+  data-open-work={work.id}
+  data-open-work-lang={lang}
+  class="work-card group block w-full cursor-pointer border bg-transparent text-left"
+  style="border-color:var(--hairline)"
+  data-domain={work.data.domain.join(',')}
+  data-service={work.data.service.join(',')}
+>
+  <div class="work-media relative aspect-[4/3] overflow-hidden">
+    <Image
+      src={work.data.cover}
+      alt={alt}
+      width={640}
+      height={480}
+      loading="lazy"
+      decoding="async"
+      draggable="false"
+      class:list={[
+        'h-full w-full scale-100 object-cover brightness-100 transition-[transform,filter,opacity] duration-300 ease-out group-hover:scale-[1.04] group-hover:brightness-105',
+        isLocalVideo && 'group-hover:opacity-0',
+      ]}
+    />
+    {work.data.cover_clay && !isLocalVideo && (
+      <Image
+        src={work.data.cover_clay}
+        alt=""
+        width={640}
+        height={480}
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+        aria-hidden="true"
+        class="absolute inset-0 h-full w-full scale-100 object-cover opacity-0 transition-[transform,filter,opacity] duration-300 ease-out group-hover:scale-[1.04] group-hover:opacity-100 group-hover:brightness-105 max-md:hidden"
+      />
+    )}
+
+    {isLocalVideo && (
+      <video
+        data-hover-preview
+        data-src={video.src}
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-hidden="true"
+        class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 ease-out max-md:hidden"
+      />
+    )}
+
+    {video && (
+      <span class="font-mono-label absolute right-2 top-2 flex items-center gap-1 bg-black/60 px-2 py-1 text-white/90">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><path d="M1 0.5L7.5 4 1 7.5V0.5Z" /></svg>
+        VIDEO
+      </span>
+    )}
+  </div>
+  <div class="px-3 py-2">
+    <p class="truncate">{title}</p>
+    <div class="font-mono-label mt-1 flex items-center justify-between gap-2" style="color:var(--ink-mid)">
+      <span class="truncate">{domainLabel}{work.data.year ? ` / ${work.data.year}` : ''}</span>
+      <svg class="shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:[color:var(--accent)]" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" />
+      </svg>
+    </div>
+  </div>
+</button>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hoverCapable = window.matchMedia('(hover: hover)').matches;
+
+  if (!reduceMotion && hoverCapable) {
+    document.querySelectorAll<HTMLElement>('.work-card').forEach((card) => {
+      const video = card.querySelector<HTMLVideoElement>('[data-hover-preview]');
+      if (!video) return;
+
+      card.addEventListener('mouseenter', () => {
+        if (!video.src) video.src = video.dataset.src || '';
+        video.style.opacity = '1';
+        video.play().catch(() => {});
+      });
+
+      card.addEventListener('mouseleave', () => {
+        video.style.opacity = '0';
+        video.pause();
+        video.currentTime = 0;
+      });
+    });
+  }
+</script>

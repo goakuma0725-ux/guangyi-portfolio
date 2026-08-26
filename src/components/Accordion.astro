@@ -1,0 +1,56 @@
+---
+interface Props {
+  items: { question: string; answerHtml: string; category?: string }[];
+}
+
+const { items } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div data-accordion class="divide-y" style="border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline)">
+  {items.map((item, i) => (
+    <div class="faq-item -mx-4 px-4 sm:-mx-6 sm:px-6">
+      <h3>
+        <button
+          type="button"
+          data-accordion-trigger
+          aria-expanded="false"
+          class="flex w-full items-start justify-between gap-4 py-4 text-left"
+        >
+          <span>
+            <span class="font-mono-label block" style="color:var(--accent); font-size:10px">
+              {pad(i + 1)}{item.category ? ` ${item.category}` : ''}
+            </span>
+            <span class="faq-question mt-1 block text-lg" style="font-family:var(--font-display)">{item.question}</span>
+          </span>
+          <span data-accordion-icon class="font-mono-label shrink-0" style="color:var(--ink-mid)">+</span>
+        </button>
+      </h3>
+      <div data-accordion-panel hidden class="pb-4" style="color:var(--ink-mid)" set:html={item.answerHtml} />
+    </div>
+  ))}
+</div>
+
+<style>
+  .faq-item:has(button[aria-expanded='true']) {
+    background: color-mix(in srgb, var(--ink) 4%, transparent);
+  }
+  .faq-item:has(button[aria-expanded='true']) .faq-question {
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-accordion]').forEach((root) => {
+    root.querySelectorAll<HTMLButtonElement>('[data-accordion-trigger]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const panel = btn.parentElement!.nextElementSibling as HTMLElement;
+        const icon = btn.querySelector('[data-accordion-icon]');
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        panel.hidden = open;
+        if (icon) icon.textContent = open ? '+' : '×';
+      });
+    });
+  });
+</script>

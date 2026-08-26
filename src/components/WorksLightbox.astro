@@ -1,0 +1,148 @@
+---
+import strings_zh from '../i18n/zh.json';
+import strings_en from '../i18n/en.json';
+
+interface Props {
+  lang: 'zh-Hant' | 'en';
+}
+
+const { lang } = Astro.props;
+const t = lang === 'en' ? strings_en : strings_zh;
+const prefix = lang === 'en' ? '/en' : '';
+---
+
+<div data-works-lightbox hidden class="fixed inset-0 z-50 flex flex-col bg-black/95 p-4 md:p-8">
+  <div class="flex items-center justify-between gap-4">
+    <div class="font-mono-label text-white/80">
+      <span data-lightbox-title></span>
+      <a data-lightbox-fulllink href="#" class="ml-3 underline hover:[color:var(--accent)]">
+        {t.work.viewFull}
+      </a>
+    </div>
+    <button type="button" data-lightbox-close aria-label={t.lightbox.close} class="text-white/80 hover:text-white">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+  </div>
+
+  <div class="relative flex flex-1 items-center justify-center overflow-hidden">
+    <button type="button" data-lightbox-prev aria-label={t.lightbox.prev} class="absolute left-0 z-10 p-2 text-white/60 hover:text-white md:left-2">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+    <img data-lightbox-main src="" alt="" class="max-h-full max-w-full object-contain" draggable="false" />
+    <button type="button" data-lightbox-next aria-label={t.lightbox.next} class="absolute right-0 z-10 p-2 text-white/60 hover:text-white md:right-2">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="1.5" /></svg>
+    </button>
+  </div>
+
+  <div data-lightbox-thumbs class="mt-4 flex justify-center gap-2 overflow-x-auto pb-1"></div>
+</div>
+
+<script define:vars={{ prefix }}>
+  (function () {
+    const overlay = document.querySelector('[data-works-lightbox]');
+    if (!overlay) return;
+
+    const mainImg = overlay.querySelector('[data-lightbox-main]');
+    const thumbsEl = overlay.querySelector('[data-lightbox-thumbs]');
+    const titleEl = overlay.querySelector('[data-lightbox-title]');
+    const fullLink = overlay.querySelector('[data-lightbox-fulllink]');
+    const closeBtn = overlay.querySelector('[data-lightbox-close]');
+    const prevBtn = overlay.querySelector('[data-lightbox-prev]');
+    const nextBtn = overlay.querySelector('[data-lightbox-next]');
+
+    const cache = new Map();
+    let current = null; // { images, index }
+
+    function renderThumbs() {
+      thumbsEl.innerHTML = '';
+      if (!current || current.images.length < 2) return;
+      current.images.forEach((img, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'h-14 w-20 shrink-0 overflow-hidden border-2';
+        btn.style.borderColor = i === current.index ? 'var(--accent)' : 'transparent';
+        btn.setAttribute('aria-label', `${i + 1}`);
+        const thumbImg = document.createElement('img');
+        thumbImg.src = img.thumb;
+        thumbImg.alt = '';
+        thumbImg.className = 'h-full w-full object-cover';
+        thumbImg.draggable = false;
+        btn.appendChild(thumbImg);
+        btn.addEventListener('click', () => show(i));
+        thumbsEl.appendChild(btn);
+      });
+    }
+
+    function show(index) {
+      if (!current) return;
+      current.index = (index + current.images.length) % current.images.length;
+      mainImg.src = current.images[current.index].full;
+      renderThumbs();
+    }
+
+    function close() {
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+      current = null;
+    }
+
+    async function open(id, lang) {
+      document.body.style.overflow = 'hidden';
+      overlay.hidden = false;
+      titleEl.textContent = '…';
+      mainImg.src = '';
+      thumbsEl.innerHTML = '';
+
+      let data = cache.get(id);
+      if (!data) {
+        try {
+          const res = await fetch(`/works-data/${id}.json`);
+          data = await res.json();
+          cache.set(id, data);
+        } catch {
+          close();
+          return;
+        }
+      }
+
+      titleEl.textContent = lang === 'en' ? data.titleEn : data.title;
+      fullLink.href = `${prefix}/works/${data.id}`;
+      current = { images: data.images, index: 0 };
+      show(0);
+    }
+
+    document.querySelectorAll('[data-open-work]').forEach((card) => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-open-work');
+        const lang = card.getAttribute('data-open-work-lang') || 'zh-Hant';
+        open(id, lang);
+      });
+    });
+
+    closeBtn?.addEventListener('click', close);
+    prevBtn?.addEventListener('click', () => current && show(current.index - 1));
+    nextBtn?.addEventListener('click', () => current && show(current.index + 1));
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (overlay.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') current && show(current.index - 1);
+      if (e.key === 'ArrowRight') current && show(current.index + 1);
+    });
+
+    let touchStartX = 0;
+    overlay.addEventListener('touchstart', (e) => (touchStartX = e.changedTouches[0].clientX), { passive: true });
+    overlay.addEventListener(
+      'touchend',
+      (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (current && Math.abs(dx) > 40) show(current.index + (dx < 0 ? 1 : -1));
+      },
+      { passive: true }
+    );
+  })();
+</script>

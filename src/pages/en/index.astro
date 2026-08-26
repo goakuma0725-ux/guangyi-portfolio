@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Carousel from '../../components/Carousel.astro';
+import WorksGrid from '../../components/WorksGrid.astro';
+import { site } from '../../config/site';
+
+const allWorks = (await getCollection('works')).sort((a, b) => a.data.order - b.data.order);
+const featured = allWorks.filter((w) => w.data.featured);
+---
+
+<BaseLayout lang="en" path="/" title={`${site.nameEn} | ${site.taglineEn}`} description={site.introEn}>
+  <h1 class="sr-only">{site.nameEn}</h1>
+  <Carousel works={featured} lang="en" />
+  <div class="px-5 md:px-10">
+    <WorksGrid works={allWorks} lang="en" />
+  </div>
+</BaseLayout>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+</style>

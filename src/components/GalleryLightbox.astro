@@ -1,0 +1,125 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  images: { src: ImageMetadata; caption?: string }[];
+  altBase: string;
+}
+
+const { images, altBase } = Astro.props;
+---
+
+{images.length > 0 && (
+  <div data-lightbox-root>
+    <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
+      {images.map((img, i) => (
+        <button type="button" data-open-lightbox={i} class="work-media aspect-[4/3] overflow-hidden border" style="border-color:var(--hairline)">
+          <Image
+            src={img.src}
+            alt={img.caption || `${altBase} ${i + 1}`}
+            width={640}
+            height={480}
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+            class="h-full w-full object-cover"
+          />
+        </button>
+      ))}
+    </div>
+
+    <div data-lightbox-overlay hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4">
+      <button type="button" data-lightbox-close aria-label="Close" class="absolute right-4 top-4 text-white/80 hover:text-white">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" /></svg>
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button type="button" data-lightbox-prev aria-label="Previous" class="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white md:left-6">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.5" /></svg>
+          </button>
+          <button type="button" data-lightbox-next aria-label="Next" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white md:right-6">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="1.5" /></svg>
+          </button>
+        </>
+      )}
+
+      <div class="flex max-h-full max-w-full flex-col items-center gap-3">
+        {images.map((img, i) => (
+          <div data-lightbox-slide={i} class="max-h-[85vh]" style={i === 0 ? '' : 'display:none'}>
+            <Image
+              src={img.src}
+              alt={img.caption || `${altBase} ${i + 1}`}
+              width={1920}
+              height={1440}
+              loading="eager"
+              draggable="false"
+              class="max-h-[85vh] w-auto object-contain"
+            />
+          </div>
+        ))}
+        <p data-lightbox-counter class="font-mono-label text-white/70"></p>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  function initLightbox(root: Element) {
+    const openBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-open-lightbox]'));
+    const overlay = root.querySelector<HTMLElement>('[data-lightbox-overlay]');
+    if (!overlay) return;
+    const slides = Array.from(overlay.querySelectorAll<HTMLElement>('[data-lightbox-slide]'));
+    const counter = overlay.querySelector('[data-lightbox-counter]');
+    const closeBtn = overlay.querySelector('[data-lightbox-close]');
+    const prevBtn = overlay.querySelector('[data-lightbox-prev]');
+    const nextBtn = overlay.querySelector('[data-lightbox-next]');
+    let index = 0;
+
+    function show(i: number) {
+      index = (i + slides.length) % slides.length;
+      slides.forEach((s, si) => (s.style.display = si === index ? '' : 'none'));
+      if (counter) counter.textContent = `${index + 1} / ${slides.length}`;
+    }
+
+    function open(i: number) {
+      show(i);
+      overlay!.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      overlay!.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    openBtns.forEach((btn) => btn.addEventListener('click', () => open(Number(btn.dataset.openLightbox))));
+    closeBtn?.addEventListener('click', close);
+    prevBtn?.addEventListener('click', () => show(index - 1));
+    nextBtn?.addEventListener('click', () => show(index + 1));
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (overlay!.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+
+    let touchStartX = 0;
+    overlay.addEventListener('touchstart', (e) => (touchStartX = e.changedTouches[0].clientX), { passive: true });
+    overlay.addEventListener(
+      'touchend',
+      (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
+      },
+      { passive: true }
+    );
+  }
+
+  document.querySelectorAll('[data-lightbox-root]').forEach(initLightbox);
+</script>

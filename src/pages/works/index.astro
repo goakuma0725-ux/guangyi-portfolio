@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WorksGrid from '../../components/WorksGrid.astro';
+import strings_zh from '../../i18n/zh.json';
+import { site } from '../../config/site';
+
+const allWorks = (await getCollection('works')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout lang="zh-Hant" path="/works" title={`${strings_zh.nav.works} ｜ ${site.name}`} description={site.introZh}>
+  <h1 class="px-5 pt-8 md:px-10" style="font-size:32px">{strings_zh.nav.works}</h1>
+  <div class="px-5 md:px-10">
+    <WorksGrid works={allWorks} lang="zh-Hant" />
+  </div>
+</BaseLayout>

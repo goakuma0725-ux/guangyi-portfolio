@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import strings_zh from '../i18n/zh.json';
+import { site } from '../config/site';
+
+const t = strings_zh;
+
+const services = [
+  {
+    domain: '建築設計',
+    title: '建築設計',
+    scenario: '建築設計提案、都市計畫審議、招商簡報需要的外觀與空間表現。',
+    needed: '建築圖說(平面/立面/剖面)、材質與色彩需求、參考案例。',
+    deliverables: '靜態透視圖(日景/夜景)、動畫漫遊(選配)。',
+    timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
+  },
+  {
+    domain: '工程模擬',
+    title: '工程模擬',
+    scenario: '橋梁、水利、交通工程等需要向主管機關或民眾說明的工程模擬。',
+    needed: '工程圖說、地形與現況資料、施工分期資訊。',
+    deliverables: '模擬透視圖、施工動畫、空拍合成。',
+    timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
+  },
+  {
+    domain: '室內設計',
+    title: '室內設計',
+    scenario: '住宅、商業空間的設計提案與客戶溝通。',
+    needed: '平面圖、材質與傢俱參考、風格方向。',
+    deliverables: '室內透視圖、材質對照圖。',
+    timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
+  },
+  {
+    domain: '景觀模擬',
+    title: '景觀模擬',
+    scenario: '公園、庭園、基地景觀規劃的視覺化呈現。',
+    needed: '景觀配置圖、植栽與鋪面規劃資料。',
+    deliverables: '景觀透視圖、鳥瞰圖。',
+    timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
+  },
+  {
+    domain: '產品模擬',
+    title: '產品模擬',
+    scenario: '產品開發階段的外觀提案、上市前的行銷素材。',
+    needed: '產品 3D 模型或工程圖、材質與色彩規格。',
+    deliverables: '產品透視圖、360° 動畫(選配)。',
+    timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
+  },
+];
+---
+
+<BaseLayout lang="zh-Hant" path="/services" title={`${t.services.title} ｜ ${site.name}`} description={site.introZh}>
+  <div class="px-5 py-8 md:px-10">
+    <h1 style="font-size:32px">{t.services.title}</h1>
+
+    <div class="mt-8 divide-y" style="border-top:1px solid var(--hairline)">
+      {services.map((s) => (
+        <section class="grid gap-4 py-8 md:grid-cols-[1fr_2fr]">
+          <h2 style="font-size:24px">{s.title}</h2>
+          <div class="space-y-4">
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.scenario}</p>
+              <p class="mt-1">{s.scenario}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.needed}</p>
+              <p class="mt-1">{s.needed}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.deliverables}</p>
+              <p class="mt-1">{s.deliverables}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.timeline}</p>
+              <p class="mt-1">{s.timeline}</p>
+            </div>
+            <a href={`/works?domain=${encodeURIComponent(s.domain)}`} class="font-mono-label inline-block underline hover:[color:var(--accent)]">
+              {t.services.viewWorks} &rarr;
+            </a>
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

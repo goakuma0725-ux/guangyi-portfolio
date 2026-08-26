@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "works": "Works",
+    "services": "Services",
+    "about": "About / Contact",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "cta": "GET IN TOUCH"
+  },
+  "home": {
+    "seeAll": "View all works",
+    "gridIntro": "Works"
+  },
+  "filter": {
+    "sectionLabel": "PORTFOLIO",
+    "domain": "Domain",
+    "service": "Service",
+    "all": "All",
+    "clear": "Clear filters",
+    "empty": "No works match the current filters."
+  },
+  "work": {
+    "video": "Animation / Video",
+    "prev": "Previous",
+    "next": "Next",
+    "backToWorks": "Back to works",
+    "downloadPdf": "Download portfolio PDF",
+    "viewFull": "View full project page"
+  },
+  "lightbox": {
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "contact": {
+    "title": "LINE or a call is the fastest way to reach us",
+    "line": "LINE",
+    "phone": "Landline",
+    "mobile": "Mobile",
+    "email": "Email",
+    "address": "Address",
+    "copy": "Copy",
+    "copied": "Copied",
+    "addFriend": "Add friend",
+    "call": "Call",
+    "mapLink": "Open in Google Maps"
+  },
+  "about": {
+    "title": "About Studio Hikari / Contact",
+    "brandsTitle": "Partner Brands",
+    "toolsTitle": "Skills & Tools",
+    "contactTitle": "Contact Information",
+    "officeTitle": "Office Location"
+  },
+  "services": {
+    "title": "Services",
+    "viewWorks": "View works in this domain",
+    "scenario": "When it fits",
+    "needed": "What we need from you",
+    "deliverables": "Deliverables",
+    "timeline": "Typical timeline"
+  },
+  "faq": {
+    "title": "FAQ",
+    "subtitle": "Frequently asked questions and collaboration notes"
+  },
+  "footer": {
+    "taxId": "Tax ID",
+    "rights": "All rights reserved"
+  },
+  "theme": {
+    "toggle": "Toggle light / dark theme"
+  },
+  "lang": {
+    "switch": "中文"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you're looking for doesn't exist or has been moved.",
+    "back": "Back to home"
+  }
+}

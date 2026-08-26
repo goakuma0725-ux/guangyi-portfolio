@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import strings_en from '../../i18n/en.json';
+import { site } from '../../config/site';
+
+const t = strings_en;
+
+const services = [
+  {
+    domain: '建築設計',
+    title: 'Architecture',
+    scenario: 'Design proposals, urban planning review, and pitch decks that need convincing exterior and spatial imagery.',
+    needed: 'Architectural drawings (plan/elevation/section), material and color direction, reference projects.',
+    deliverables: 'Static renderings (day/night), walkthrough animation (optional).',
+    timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
+  },
+  {
+    domain: '工程模擬',
+    title: 'Engineering Simulation',
+    scenario: 'Bridge, water, and transportation projects that need to be explained to authorities or the public.',
+    needed: 'Engineering drawings, terrain and site condition data, construction phasing information.',
+    deliverables: 'Simulation renderings, construction-phase animation, aerial composites.',
+    timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
+  },
+  {
+    domain: '室內設計',
+    title: 'Interior Design',
+    scenario: 'Residential and commercial interior proposals and client communication.',
+    needed: 'Floor plans, material and furniture references, style direction.',
+    deliverables: 'Interior renderings, material comparison boards.',
+    timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
+  },
+  {
+    domain: '景觀模擬',
+    title: 'Landscape',
+    scenario: 'Visualization for parks, gardens, and site landscape planning.',
+    needed: 'Landscape layout, planting and paving plans.',
+    deliverables: 'Landscape renderings, aerial views.',
+    timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
+  },
+  {
+    domain: '產品模擬',
+    title: 'Product',
+    scenario: 'Appearance proposals during product development, marketing assets ahead of launch.',
+    needed: 'Product 3D model or engineering drawings, material and color spec.',
+    deliverables: 'Product renderings, 360° animation (optional).',
+    timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
+  },
+];
+---
+
+<BaseLayout lang="en" path="/services" title={`${t.services.title} | ${site.nameEn}`} description={site.introEn}>
+  <div class="px-5 py-8 md:px-10">
+    <h1 style="font-size:32px">{t.services.title}</h1>
+
+    <div class="mt-8 divide-y" style="border-top:1px solid var(--hairline)">
+      {services.map((s) => (
+        <section class="grid gap-4 py-8 md:grid-cols-[1fr_2fr]">
+          <h2 style="font-size:24px">{s.title}</h2>
+          <div class="space-y-4">
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.scenario}</p>
+              <p class="mt-1">{s.scenario}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.needed}</p>
+              <p class="mt-1">{s.needed}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.deliverables}</p>
+              <p class="mt-1">{s.deliverables}</p>
+            </div>
+            <div>
+              <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.timeline}</p>
+              <p class="mt-1">{s.timeline}</p>
+            </div>
+            <a href={`/en/works?domain=${encodeURIComponent(s.domain)}`} class="font-mono-label inline-block underline hover:[color:var(--accent)]">
+              {t.services.viewWorks} &rarr;
+            </a>
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
