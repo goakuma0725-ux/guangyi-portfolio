@@ -7,7 +7,7 @@ const t = strings_zh;
 
 const services = [
   {
-    domain: '建築設計',
+    domain: 'architecture',
     title: '建築設計',
     scenario: '建築設計提案、都市計畫審議、招商簡報需要的外觀與空間表現。',
     needed: '建築圖說(平面/立面/剖面)、材質與色彩需求、參考案例。',
@@ -15,7 +15,7 @@ const services = [
     timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
   },
   {
-    domain: '工程模擬',
+    domain: 'engineering',
     title: '工程模擬',
     scenario: '橋梁、水利、交通工程等需要向主管機關或民眾說明的工程模擬。',
     needed: '工程圖說、地形與現況資料、施工分期資訊。',
@@ -23,7 +23,7 @@ const services = [
     timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
   },
   {
-    domain: '室內設計',
+    domain: 'interior',
     title: '室內設計',
     scenario: '住宅、商業空間的設計提案與客戶溝通。',
     needed: '平面圖、材質與傢俱參考、風格方向。',
@@ -31,7 +31,7 @@ const services = [
     timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
   },
   {
-    domain: '景觀模擬',
+    domain: 'landscape',
     title: '景觀模擬',
     scenario: '公園、庭園、基地景觀規劃的視覺化呈現。',
     needed: '景觀配置圖、植栽與鋪面規劃資料。',
@@ -39,7 +39,7 @@ const services = [
     timeline: '依案件規模與修改次數而定,提案前會先確認時程。',
   },
   {
-    domain: '產品模擬',
+    domain: 'product',
     title: '產品模擬',
     scenario: '產品開發階段的外觀提案、上市前的行銷素材。',
     needed: '產品 3D 模型或工程圖、材質與色彩規格。',
@@ -50,7 +50,7 @@ const services = [
 ---
 
 <BaseLayout lang="zh-Hant" path="/services" title={`${t.services.title} ｜ ${site.name}`} description={site.introZh}>
-  <div class="px-5 py-8 md:px-10">
+  <div class="mx-auto max-w-[1600px] px-5 py-8 md:px-10">
     <h1 style="font-size:32px">{t.services.title}</h1>
 
     <div class="mt-8 divide-y" style="border-top:1px solid var(--hairline)">

@@ -12,7 +12,7 @@ const featured = allWorks.filter((w) => w.data.featured);
 <BaseLayout lang="en" path="/" title={`${site.nameEn} | ${site.taglineEn}`} description={site.introEn}>
   <h1 class="sr-only">{site.nameEn}</h1>
   <Carousel works={featured} lang="en" />
-  <div class="px-5 md:px-10">
+  <div class="mx-auto max-w-[1600px] px-5 md:px-10">
     <WorksGrid works={allWorks} lang="en" />
   </div>
 </BaseLayout>

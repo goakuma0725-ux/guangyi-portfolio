@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntries } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GalleryLightbox from '../../../components/GalleryLightbox.astro';
 import VideoBlock from '../../../components/VideoBlock.astro';
 import strings_en from '../../../i18n/en.json';
-import { site, DOMAIN_LABELS_EN, SERVICE_LABELS_EN } from '../../../config/site';
+import { site, SERVICE_LABELS_EN } from '../../../config/site';
 
 export async function getStaticPaths() {
   const works = await getCollection('works');
@@ -20,13 +20,14 @@ const prev = allWorks[(idx - 1 + allWorks.length) % allWorks.length];
 const next = allWorks[(idx + 1) % allWorks.length];
 
 const title = work.data.title_en || work.data.title;
-const domainLabel = work.data.domain.map((d) => DOMAIN_LABELS_EN[d]).join(' · ');
+const domainEntries = await getEntries(work.data.domain);
+const domainLabel = domainEntries.map((d) => d.data.title_en || d.data.title).join(' · ');
 const serviceLabel = work.data.service.map((s) => SERVICE_LABELS_EN[s]).join(' · ');
 const description = `${title} | ${domainLabel} | ${site.nameEn}`;
 ---
 
 <BaseLayout lang="en" path={`/works/${work.id}`} title={`${title} | ${site.nameEn}`} description={description} ogImage={work.data.cover.src}>
-  <article class="px-5 py-8 md:px-10">
+  <article class="mx-auto max-w-[1600px] px-5 py-8 md:px-10">
     <a href="/en/works" class="font-mono-label" style="color:var(--ink-mid)">&larr; {t.work.backToWorks}</a>
 
     <h1 class="mt-4" style="font-size:32px">{title}</h1>

@@ -22,9 +22,13 @@ collections:
       - { label: "英文案名 (Title EN)", name: "title_en", widget: "string", required: false }
       - label: "領域 (Domain)"
         name: "domain"
-        widget: "select"
+        widget: "relation"
         multiple: true
-        options: ["建築設計", "工程模擬", "室內設計", "景觀模擬", "產品模擬"]
+        collection: "domains"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        value_field: "{{slug}}"
+        hint: "選單裡沒有想要的領域？先到左側「領域管理」新增一筆,再回來這裡選"
       - label: "服務 (Service)"
         name: "service"
         widget: "select"
@@ -47,6 +51,17 @@ collections:
           - { label: "封面 Poster", name: "poster", widget: "image", required: false }
       - { label: "首頁輪播推薦 (Featured)", name: "featured", widget: "boolean", default: false }
       - { label: "排序 (Order,數字小的在前)", name: "order", widget: "number", default: 0, value_type: "int" }
+
+  - name: "domains"
+    label: "領域管理 (Domains)"
+    label_singular: "領域"
+    folder: "src/content/domains"
+    create: true
+    slug: "{{slug}}"
+    format: "frontmatter"
+    fields:
+      - { label: "領域名稱 (Title)", name: "title", widget: "string", hint: "會顯示在作品過濾器與作品卡片上" }
+      - { label: "英文名稱 (Title EN)", name: "title_en", widget: "string", required: false }
 
   - name: "faq"
     label: "常見問題 (FAQ)"

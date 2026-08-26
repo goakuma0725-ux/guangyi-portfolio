@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { getEntries, type CollectionEntry } from 'astro:content';
 
 interface Props {
   work: CollectionEntry<'works'>;
@@ -9,7 +9,9 @@ interface Props {
 
 const { work, lang } = Astro.props;
 const title = (lang === 'en' && work.data.title_en) || work.data.title;
-const domainLabel = work.data.domain.join(' · ');
+const domainEntries = await getEntries(work.data.domain);
+const domainIds = domainEntries.map((d) => d.id);
+const domainLabel = domainEntries.map((d) => (lang === 'en' && d.data.title_en) || d.data.title).join(' · ');
 const alt = `${title} ${domainLabel}`;
 
 const video = work.data.video;
@@ -22,7 +24,7 @@ const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.sr
   data-open-work-lang={lang}
   class="work-card group block w-full cursor-pointer border bg-transparent text-left"
   style="border-color:var(--hairline)"
-  data-domain={work.data.domain.join(',')}
+  data-domain={domainIds.join(',')}
   data-service={work.data.service.join(',')}
 >
   <div class="work-media relative aspect-[4/3] overflow-hidden">

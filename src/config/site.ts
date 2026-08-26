@@ -37,19 +37,10 @@ export function telHref(taiwanLocalNumber: string): string {
   return `tel:+886${digits}`;
 }
 
-// Long-form labels — matches the naming used consistently across the Stitch
-// visual mockups (studio_hikari_7/8 home, _6 FAQ, cms config), not the short
-// form from the original text spec.
-export const DOMAINS = ['建築設計', '工程模擬', '室內設計', '景觀模擬', '產品模擬'] as const;
+// Domains are no longer a fixed list here — they're a CMS-editable content
+// collection (src/content/domains/*.md) so editors can add one without a
+// code change. See src/content/config.ts.
 export const SERVICES = ['靜態透視圖', '動畫', '模擬分析', 'BIM'] as const;
-
-export const DOMAIN_LABELS_EN: Record<(typeof DOMAINS)[number], string> = {
-  建築設計: 'Architecture',
-  工程模擬: 'Engineering',
-  室內設計: 'Interior',
-  景觀模擬: 'Landscape',
-  產品模擬: 'Product',
-};
 
 export const SERVICE_LABELS_EN: Record<(typeof SERVICES)[number], string> = {
   靜態透視圖: 'Renderings',

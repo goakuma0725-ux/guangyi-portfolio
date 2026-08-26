@@ -7,7 +7,7 @@ const t = strings_en;
 
 const services = [
   {
-    domain: '建築設計',
+    domain: 'architecture',
     title: 'Architecture',
     scenario: 'Design proposals, urban planning review, and pitch decks that need convincing exterior and spatial imagery.',
     needed: 'Architectural drawings (plan/elevation/section), material and color direction, reference projects.',
@@ -15,7 +15,7 @@ const services = [
     timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
   },
   {
-    domain: '工程模擬',
+    domain: 'engineering',
     title: 'Engineering Simulation',
     scenario: 'Bridge, water, and transportation projects that need to be explained to authorities or the public.',
     needed: 'Engineering drawings, terrain and site condition data, construction phasing information.',
@@ -23,7 +23,7 @@ const services = [
     timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
   },
   {
-    domain: '室內設計',
+    domain: 'interior',
     title: 'Interior Design',
     scenario: 'Residential and commercial interior proposals and client communication.',
     needed: 'Floor plans, material and furniture references, style direction.',
@@ -31,7 +31,7 @@ const services = [
     timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
   },
   {
-    domain: '景觀模擬',
+    domain: 'landscape',
     title: 'Landscape',
     scenario: 'Visualization for parks, gardens, and site landscape planning.',
     needed: 'Landscape layout, planting and paving plans.',
@@ -39,7 +39,7 @@ const services = [
     timeline: 'Depends on project scope and revision rounds — confirmed with you before we start.',
   },
   {
-    domain: '產品模擬',
+    domain: 'product',
     title: 'Product',
     scenario: 'Appearance proposals during product development, marketing assets ahead of launch.',
     needed: 'Product 3D model or engineering drawings, material and color spec.',
@@ -50,7 +50,7 @@ const services = [
 ---
 
 <BaseLayout lang="en" path="/services" title={`${t.services.title} | ${site.nameEn}`} description={site.introEn}>
-  <div class="px-5 py-8 md:px-10">
+  <div class="mx-auto max-w-[1600px] px-5 py-8 md:px-10">
     <h1 style="font-size:32px">{t.services.title}</h1>
 
     <div class="mt-8 divide-y" style="border-top:1px solid var(--hairline)">

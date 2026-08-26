@@ -12,7 +12,7 @@ const featured = allWorks.filter((w) => w.data.featured);
 <BaseLayout lang="zh-Hant" path="/" title={`${site.name} ｜ ${site.taglineZh}`} description={site.introZh}>
   <h1 class="sr-only">{site.name}</h1>
   <Carousel works={featured} lang="zh-Hant" />
-  <div class="px-5 md:px-10">
+  <div class="mx-auto max-w-[1600px] px-5 md:px-10">
     <WorksGrid works={allWorks} lang="zh-Hant" />
   </div>
 </BaseLayout>

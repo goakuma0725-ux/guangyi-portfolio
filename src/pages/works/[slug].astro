@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntries } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GalleryLightbox from '../../components/GalleryLightbox.astro';
@@ -20,13 +20,13 @@ const prev = allWorks[(idx - 1 + allWorks.length) % allWorks.length];
 const next = allWorks[(idx + 1) % allWorks.length];
 
 const title = work.data.title;
-const domainLabel = work.data.domain.join(' · ');
+const domainLabel = (await getEntries(work.data.domain)).map((d) => d.data.title).join(' · ');
 const serviceLabel = work.data.service.join(' · ');
 const description = `${title}｜${domainLabel}｜${site.name}`;
 ---
 
 <BaseLayout lang="zh-Hant" path={`/works/${work.id}`} title={`${title} ｜ ${site.name}`} description={description} ogImage={work.data.cover.src}>
-  <article class="px-5 py-8 md:px-10">
+  <article class="mx-auto max-w-[1600px] px-5 py-8 md:px-10">
     <a href="/works" class="font-mono-label" style="color:var(--ink-mid)">&larr; {t.work.backToWorks}</a>
 
     <h1 class="mt-4" style="font-size:32px">{title}</h1>

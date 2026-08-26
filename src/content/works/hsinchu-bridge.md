@@ -1,7 +1,7 @@
 ---
 title: "新竹十二寮大橋"
 title_en: "Hsinchu Shierliao Bridge"
-domain: ["工程模擬"]
+domain: ["engineering"]
 service: ["模擬分析"]
 year: 2026
 cover: "./hsinchu-bridge/cover.jpg"

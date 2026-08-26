@@ -1,6 +1,17 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, reference, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { DOMAINS, SERVICES } from '../config/site';
+import { SERVICES } from '../config/site';
+
+// Domains are CMS-editable (via the "relation" widget) rather than a fixed
+// enum — content editors can add a new domain by creating an entry here,
+// no code change needed. See src/content/domains/*.md for the seed set.
+const domains = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/domains' }),
+  schema: z.object({
+    title: z.string(),
+    title_en: z.string().optional(),
+  }),
+});
 
 const works = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/works' }),
@@ -8,7 +19,7 @@ const works = defineCollection({
     z.object({
       title: z.string(),
       title_en: z.string().optional(),
-      domain: z.array(z.enum(DOMAINS)).min(1),
+      domain: z.array(reference('domains')).min(1),
       service: z.array(z.enum(SERVICES)).min(1),
       year: z.number().optional(),
       cover: image(),
@@ -45,4 +56,4 @@ const faq = defineCollection({
   }),
 });
 
-export const collections = { works, faq };
+export const collections = { works, faq, domains };

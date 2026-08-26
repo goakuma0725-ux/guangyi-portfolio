@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { getEntries, type CollectionEntry } from 'astro:content';
 
 interface Props {
   works: CollectionEntry<'works'>[];
@@ -10,6 +10,12 @@ interface Props {
 const { works, lang } = Astro.props;
 const prefix = lang === 'en' ? '/en' : '';
 const pad = (n: number) => String(n).padStart(2, '0');
+const domainLabels = await Promise.all(
+  works.map(async (work) => {
+    const entries = await getEntries(work.data.domain);
+    return entries.map((d) => (lang === 'en' && d.data.title_en) || d.data.title).join(' · ');
+  })
+);
 ---
 
 {works.length > 0 && (
@@ -17,7 +23,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     <div data-track class="flex h-full transition-transform duration-500 ease-out" style={`width:${works.length * 100}%`}>
       {works.map((work, i) => {
         const title = (lang === 'en' && work.data.title_en) || work.data.title;
-        const domainLabel = work.data.domain.join(' · ');
+        const domainLabel = domainLabels[i];
         return (
           <a
             href={`${prefix}/works/${work.id}`}
