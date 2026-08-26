@@ -37,54 +37,61 @@
   --font-mono: var(--font-mono);
 }
 
-* {
-  border-color: var(--hairline);
-}
+/* Everything below is in @layer base so Tailwind utility classes (e.g.
+   border-[var(--accent)], text colors, font-weight) always win over these
+   defaults. An unlayered rule would beat every layered utility regardless
+   of source order or specificity — that bug previously made the header's
+   active-page underline invisible. */
+@layer base {
+  * {
+    border-color: var(--hairline);
+  }
 
-html {
-  background: var(--paper);
-  color: var(--ink);
-}
+  html {
+    background: var(--paper);
+    color: var(--ink);
+  }
 
-body {
-  font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.7;
-}
+  body {
+    font-family: var(--font-body);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+  }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
 
-.font-mono-label {
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 12px;
-}
+  .font-mono-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12px;
+  }
 
-a {
-  color: inherit;
-}
+  a {
+    color: inherit;
+  }
 
-img, video {
-  max-width: 100%;
-  display: block;
-}
+  img, video {
+    max-width: 100%;
+    display: block;
+  }
 
-/* work imagery: deter casual right-click save / drag, per spec §6 (deterrent only) */
-.work-media img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
+  /* work imagery: deter casual right-click save / drag, per spec §6 (deterrent only) */
+  .work-media img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
