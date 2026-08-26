@@ -49,13 +49,14 @@ ffmpeg -i input.mov -c:v libx264 -profile:v high -crf 23 -preset slow \
 
 ## 設定 CMS 後台（Sveltia CMS）
 
-後台網址 `/admin`，需要 GitHub OAuth 中繼伺服器才能登入：
+後台網址 `/admin`，用 GitHub 帳號登入。因為只有您（或少數技術人員）在用後台，採用 Sveltia CMS 官方建議最簡單的 **Access Token** 登入方式，不需要架 OAuth App、不需要 Cloudflare Worker：
 
-1. GitHub → Settings → Developer settings → OAuth Apps，建立新 App：
-   - Homepage URL：`https://nerdibility.com`
-   - Authorization callback URL：`https://<你的 Cloudflare Worker 網址>/callback`
-2. 部署 [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) 到 Cloudflare Workers（免費版即可），填入 OAuth App 的 Client ID / Secret 作為 Worker 環境變數。
-3. 編輯 [public/admin/config.yml](public/admin/config.yml)：把 `repo` 換成你的 `帳號/repo名`，`base_url` 換成 Worker 網址。
+1. 打開 `https://nerdibility.com/admin`
+2. 登入畫面按「**Sign In with Token**」
+3. 依畫面指示連到 GitHub 產生一組 Personal Access Token（畫面會預先勾好需要的權限範圍）
+4. 複製貼回登入視窗即可
+
+Token 存在瀏覽器的 local storage，之後同一台電腦/瀏覽器不用重複登入。若未來需要讓多位非技術人員也能上稿，才需要改用完整的 OAuth 中繼（[sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) 部署到 Cloudflare Workers）。
 
 ## 待補的真實素材（目前用佔位/空白處理，不是假資料）
 

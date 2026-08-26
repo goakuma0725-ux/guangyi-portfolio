@@ -1,9 +1,10 @@
 backend:
   name: github
-  repo: [您的GitHub帳號]/guangyi-portfolio # 例如: goakuma0725/guangyi-portfolio
+  repo: goakuma0725-ux/guangyi-portfolio
   branch: main
-  base_url: [您的CloudflareWorker網址] # sveltia-cms-auth 的 Worker 網址,不含 /callback
-  auth_endpoint: callback
+  # 只有您本人在用後台,採用 Sveltia CMS 官方建議的「Access Token」登入方式:
+  # 不需要 OAuth App、不需要 Cloudflare Worker。登入畫面按「Sign In with
+  # Token」,依指示到 GitHub 產生一組 Personal Access Token 貼上即可。
 
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
