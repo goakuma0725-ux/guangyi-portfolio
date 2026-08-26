@@ -50,7 +50,7 @@ const services = [
 ---
 
 <BaseLayout lang="zh-Hant" path="/services" title={`${t.services.title} ｜ ${site.name} STUDIO HIKARI`} description={site.introZh}>
-  <div class="mx-auto max-w-[1600px] px-5 py-8 md:px-10">
+  <div class="mx-auto max-w-[1440px] px-5 py-8 md:px-10">
     <h1 style="font-size:32px">{t.services.title}</h1>
 
     <div class="mt-8 divide-y" style="border-top:1px solid var(--hairline)">
@@ -60,19 +60,19 @@ const services = [
           <div class="space-y-4">
             <div>
               <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.scenario}</p>
-              <p class="mt-1">{s.scenario}</p>
+              <p class="mt-1" style="font-size:15px">{s.scenario}</p>
             </div>
             <div>
               <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.needed}</p>
-              <p class="mt-1">{s.needed}</p>
+              <p class="mt-1" style="font-size:15px">{s.needed}</p>
             </div>
             <div>
               <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.deliverables}</p>
-              <p class="mt-1">{s.deliverables}</p>
+              <p class="mt-1" style="font-size:15px">{s.deliverables}</p>
             </div>
             <div>
               <p class="font-mono-label" style="color:var(--ink-mid)">{t.services.timeline}</p>
-              <p class="mt-1">{s.timeline}</p>
+              <p class="mt-1" style="font-size:15px">{s.timeline}</p>
             </div>
             <a href={`/works?domain=${encodeURIComponent(s.domain)}`} class="font-mono-label inline-block underline hover:[color:var(--accent)]">
               {t.services.viewWorks} &rarr;

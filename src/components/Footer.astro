@@ -13,8 +13,8 @@ const address = lang === 'en' ? site.addressEn : site.addressZh;
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t px-5 py-10 md:px-10" style="border-color:var(--hairline)">
-  <div class="mx-auto flex max-w-[1600px] flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+<footer class="border-t" style="border-color:var(--hairline)">
+  <div class="mx-auto flex max-w-[1440px] flex-col gap-10 px-5 py-10 md:px-10 lg:flex-row lg:items-center lg:justify-between">
     <div class="shrink-0">
       <p class="text-3xl font-bold tracking-tight" style="font-family:var(--font-display)">{site.nameEn}</p>
       <p class="font-mono-label mt-2" style="color:var(--ink-mid)">© {year} {site.nameEn}. {t.footer.rights}.</p>
@@ -23,21 +23,21 @@ const year = new Date().getFullYear();
     <div class="font-mono-label grid grid-cols-3 gap-6 sm:gap-12" style="color:var(--ink-mid)">
       <div class="space-y-1">
         <p class="mb-2" style="color:var(--ink)">CONTACT</p>
-        {site.lineId && <div>{site.lineId.replace(/^@?/, '@').toUpperCase()}</div>}
-        {site.email && <div><a href={`mailto:${site.email}`} class="hover:[color:var(--accent)]">{site.email}</a></div>}
+        {site.lineId && <div>LINE：<span class="normal-case">{site.lineId.replace(/^@?/, '@')}</span></div>}
+        {site.email && <div><a href={`mailto:${site.email}`} class="normal-case hover:[color:var(--accent)]">{site.email}</a></div>}
         {site.phone && <div><a href={telHref(site.phone)} class="hover:[color:var(--accent)]">{site.phone}</a></div>}
       </div>
 
       <div class="space-y-1">
         <p class="mb-2" style="color:var(--ink)">INFO</p>
-        {address && <div>{address}</div>}
+        {address && <div class="normal-case">{address}</div>}
         {site.taxId && <div>{site.taxId}</div>}
       </div>
 
       <div class="space-y-1">
         <p class="mb-2" style="color:var(--ink)">RESOURCES</p>
         {site.portfolioPdf && (
-          <div><a href={site.portfolioPdf} download class="hover:[color:var(--accent)]">{t.work.downloadPdf.toUpperCase()}</a></div>
+          <div><a href={site.portfolioPdf} download class="hover:[color:var(--accent)]">{t.work.downloadPdf}</a></div>
         )}
       </div>
     </div>

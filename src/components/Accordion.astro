@@ -26,7 +26,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <span data-accordion-icon class="font-mono-label shrink-0" style="color:var(--ink-mid)">+</span>
         </button>
       </h3>
-      <div data-accordion-panel hidden class="pb-4" style="color:var(--ink-mid)" set:html={item.answerHtml} />
+      <div data-accordion-panel hidden class="pb-4" style="color:var(--ink-mid); font-size:15px" set:html={item.answerHtml} />
     </div>
   ))}
 </div>

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Carousel from '../components/Carousel.astro';
 import WorksGrid from '../components/WorksGrid.astro';
+import strings_zh from '../i18n/zh.json';
 import { site } from '../config/site';
 
 const allWorks = (await getCollection('works')).sort((a, b) => a.data.order - b.data.order);
@@ -11,8 +12,9 @@ const featured = allWorks.filter((w) => w.data.featured);
 
 <BaseLayout lang="zh-Hant" path="/" title={`${site.name} STUDIO HIKARI ｜ ${site.taglineZh}`} description={site.introZh}>
   <h1 class="sr-only">{site.name}</h1>
-  <Carousel works={featured} lang="zh-Hant" />
-  <div class="mx-auto max-w-[1600px] px-5 md:px-10">
+  <div class="mx-auto max-w-[1440px] px-5 md:px-10">
+    <Carousel works={featured} lang="zh-Hant" />
+    <h2 class="mt-10" style="font-size:32px">{strings_zh.nav.works}</h2>
     <WorksGrid works={allWorks} lang="zh-Hant" />
   </div>
 </BaseLayout>
