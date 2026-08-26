@@ -41,6 +41,7 @@ const domainLabels = await Promise.all(
               fetchpriority={i === 0 ? 'high' : 'auto'}
               decoding="async"
               draggable="false"
+              data-kb-image
               class="h-full w-full object-cover"
             />
             <span class="font-mono-label absolute bottom-4 left-4 text-white/90 md:bottom-6 md:left-6">
@@ -50,6 +51,11 @@ const domainLabels = await Promise.all(
         );
       })}
     </div>
+
+    <div
+      class="pointer-events-none absolute inset-0"
+      style="background: linear-gradient(to right, rgba(0,0,0,.4), transparent 18%, transparent 82%, rgba(0,0,0,.4)), linear-gradient(to top, rgba(0,0,0,.55), transparent 35%)"
+    ></div>
 
     {works.length > 1 && (
       <div class="absolute bottom-4 right-4 flex items-center gap-3 rounded-full bg-black/40 px-3 py-2 backdrop-blur-sm md:bottom-6 md:right-6" data-pager>
@@ -97,9 +103,28 @@ const domainLabels = await Promise.all(
       if (counter) counter.textContent = pad(index + 1);
     }
 
+    // Subtle Ken Burns zoom on the active slide only, timed to finish right
+    // as the slide changes. Disabled under prefers-reduced-motion.
+    function setZoom(slideIndex: number, zoomed: boolean) {
+      if (reduceMotion) return;
+      const img = slides[slideIndex]?.querySelector<HTMLElement>('[data-kb-image]');
+      if (!img) return;
+      img.style.transition = 'none';
+      img.style.transform = 'scale(1)';
+      if (zoomed) {
+        // force reflow so the transition below actually animates from scale(1)
+        void img.offsetHeight;
+        img.style.transition = `transform ${DURATION}ms linear`;
+        img.style.transform = 'scale(1.08)';
+      }
+    }
+
     function goTo(next: number) {
+      const prevIndex = index;
       index = (next + slides.length) % slides.length;
+      setZoom(prevIndex, false);
       render();
+      setZoom(index, true);
       if (progress) progress.style.width = '0%';
       start = performance.now();
     }
@@ -163,6 +188,7 @@ const domainLabels = await Promise.all(
     );
 
     render();
+    setZoom(index, true);
   }
 
   document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
