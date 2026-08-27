@@ -12,6 +12,9 @@ npm-debug.log*
 .env
 .env.production
 
+# media-tool secret (password + GitHub token) — lives only on Hostinger, never in git
+public/media-tool/secret.php
+
 # editor
 .vscode/*
 !.vscode/extensions.json
