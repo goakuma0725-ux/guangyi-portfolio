@@ -1,7 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import strings_zh from '../i18n/zh.json';
 import strings_en from '../i18n/en.json';
 import { site, telHref } from '../config/site';
+import logoCat from '../assets/LOGO-cat.png';
 
 interface Props {
   lang: 'zh-Hant' | 'en';
@@ -15,9 +17,12 @@ const year = new Date().getFullYear();
 
 <footer class="border-t" style="border-color:var(--hairline)">
   <div class="mx-auto flex max-w-[1440px] flex-col gap-10 px-5 py-10 md:px-10 lg:flex-row lg:items-center lg:justify-between">
-    <div class="shrink-0">
-      <p class="text-3xl font-bold tracking-tight" style="font-family:var(--font-display)">{site.nameEn}</p>
-      <p class="font-mono-label mt-2" style="color:var(--ink-mid)">© {year} {site.nameEn}. {t.footer.rights}.</p>
+    <div class="flex shrink-0 items-center gap-4">
+      <Image src={logoCat} alt="" width={120} height={115} class="h-16 w-auto" />
+      <div>
+        <p class="text-3xl font-bold tracking-tight" style="font-family:var(--font-display)">{site.nameEn}</p>
+        <p class="font-mono-label mt-2" style="color:var(--ink-mid)">© {year} {site.nameEn}. {t.footer.rights}.</p>
+      </div>
     </div>
 
     <div class="font-mono-label grid grid-cols-3 gap-6 sm:gap-12" style="color:var(--ink-mid)">
