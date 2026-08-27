@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { getEntries, type CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -32,11 +31,11 @@ const domainLabels = await Promise.all(
             data-slide
             aria-hidden={i === 0 ? 'false' : 'true'}
           >
-            <Image
+            <img
               src={work.data.cover}
               alt={`${title} ${domainLabel}`}
-              width={1920}
-              height={1152}
+              width="1920"
+              height="1152"
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchpriority={i === 0 ? 'high' : 'auto'}
               decoding="async"

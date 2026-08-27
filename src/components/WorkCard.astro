@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { getEntries, type CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -28,11 +27,11 @@ const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.sr
   data-service={work.data.service.join(',')}
 >
   <div class="work-media relative aspect-[4/3] overflow-hidden">
-    <Image
+    <img
       src={work.data.cover}
       alt={alt}
-      width={640}
-      height={480}
+      width="640"
+      height="480"
       loading="lazy"
       decoding="async"
       draggable="false"
@@ -42,11 +41,11 @@ const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.sr
       ]}
     />
     {work.data.cover_clay && !isLocalVideo && (
-      <Image
+      <img
         src={work.data.cover_clay}
         alt=""
-        width={640}
-        height={480}
+        width="640"
+        height="480"
         loading="lazy"
         decoding="async"
         draggable="false"

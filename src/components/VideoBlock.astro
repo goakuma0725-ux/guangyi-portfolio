@@ -1,12 +1,10 @@
 ---
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
 import strings_zh from '../i18n/zh.json';
 import strings_en from '../i18n/en.json';
 
 interface Props {
   src: string; // local /media/*.mp4 path, or an external embed URL (YouTube/Vimeo)
-  poster?: ImageMetadata;
+  poster?: string;
   lang: 'zh-Hant' | 'en';
 }
 
@@ -37,7 +35,7 @@ function toEmbedUrl(url: string) {
       ></iframe>
     </div>
   ) : (
-    <video controls playsinline preload="none" poster={poster?.src} class="w-full">
+    <video controls playsinline preload="none" poster={poster} class="w-full">
       <source src={src} type="video/mp4" />
     </video>
   )}

@@ -1,6 +1,5 @@
 ---
 import { getCollection, getEntries } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GalleryLightbox from '../../components/GalleryLightbox.astro';
 import VideoBlock from '../../components/VideoBlock.astro';
@@ -25,7 +24,7 @@ const serviceLabel = work.data.service.join(' · ');
 const description = `${title}｜${domainLabel}｜${site.name}`;
 ---
 
-<BaseLayout lang="zh-Hant" path={`/works/${work.id}`} title={`${title} ｜ ${site.name} STUDIO HIKARI`} description={description} ogImage={work.data.cover.src}>
+<BaseLayout lang="zh-Hant" path={`/works/${work.id}`} title={`${title} ｜ ${site.name} STUDIO HIKARI`} description={description} ogImage={work.data.cover}>
   <article class="mx-auto max-w-[1440px] px-5 py-8 md:px-10">
     <a href="/works" class="font-mono-label" style="color:var(--ink-mid)">&larr; {t.work.backToWorks}</a>
 
@@ -35,7 +34,7 @@ const description = `${title}｜${domainLabel}｜${site.name}`;
     </p>
 
     <div class="work-media mt-6 aspect-[16/9] overflow-hidden border" style="border-color:var(--hairline)">
-      <Image src={work.data.cover} alt={`${title} ${domainLabel}`} width={1920} height={1080} loading="eager" fetchpriority="high" draggable="false" class="h-full w-full object-cover" />
+      <img src={work.data.cover} alt={`${title} ${domainLabel}`} width="1920" height="1080" loading="eager" fetchpriority="high" draggable="false" class="h-full w-full object-cover" />
     </div>
 
     {work.data.gallery && work.data.gallery.length > 0 && (

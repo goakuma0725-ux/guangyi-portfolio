@@ -1,9 +1,6 @@
 ---
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
-
 interface Props {
-  images: { src: ImageMetadata; caption?: string }[];
+  images: string[];
   altBase: string;
 }
 
@@ -15,11 +12,11 @@ const { images, altBase } = Astro.props;
     <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
       {images.map((img, i) => (
         <button type="button" data-open-lightbox={i} class="work-media aspect-[4/3] overflow-hidden border" style="border-color:var(--hairline)">
-          <Image
-            src={img.src}
-            alt={img.caption || `${altBase} ${i + 1}`}
-            width={640}
-            height={480}
+          <img
+            src={img}
+            alt={`${altBase} ${i + 1}`}
+            width="640"
+            height="480"
             loading="lazy"
             decoding="async"
             draggable="false"
@@ -48,11 +45,11 @@ const { images, altBase } = Astro.props;
       <div class="flex max-h-full max-w-full flex-col items-center gap-3">
         {images.map((img, i) => (
           <div data-lightbox-slide={i} class="max-h-[85vh]" style={i === 0 ? '' : 'display:none'}>
-            <Image
-              src={img.src}
-              alt={img.caption || `${altBase} ${i + 1}`}
-              width={1920}
-              height={1440}
+            <img
+              src={img}
+              alt={`${altBase} ${i + 1}`}
+              width="1920"
+              height="1440"
               loading="eager"
               draggable="false"
               class="max-h-[85vh] w-auto object-contain"

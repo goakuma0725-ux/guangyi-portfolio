@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { getImage } from 'astro:assets';
 
 export async function getStaticPaths() {
   const works = await getCollection('works');
@@ -10,15 +9,8 @@ export async function getStaticPaths() {
 export const GET: APIRoute = async ({ props }) => {
   const work = (props as any).work as Awaited<ReturnType<typeof getCollection<'works'>>>[number];
 
-  const sources = work.data.gallery && work.data.gallery.length > 0 ? work.data.gallery.map((g) => g.src) : [work.data.cover];
-
-  const images = await Promise.all(
-    sources.map(async (src) => {
-      const full = await getImage({ src, width: 1600, format: 'webp' });
-      const thumb = await getImage({ src, width: 160, height: 120, format: 'webp' });
-      return { full: full.src, thumb: thumb.src };
-    })
-  );
+  const sources = work.data.gallery && work.data.gallery.length > 0 ? work.data.gallery : [work.data.cover];
+  const images = sources.map((src) => ({ full: src, thumb: src }));
 
   const body = {
     id: work.id,
