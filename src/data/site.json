@@ -1,16 +1,8 @@
 {
-  "name": "光翊設計工作室",
-  "nameEn": "STUDIO HIKARI",
-  "shortName": "光翊設計",
-  "domain": "nerdibility.com",
-  "url": "https://nerdibility.com",
-
-  "taglineZh": "讓我們成為您與客戶溝通最好的橋樑",
+  "taglineZh": "設計溝通最好的橋樑",
   "taglineEn": "Showing your client exactly what you mean.",
-
   "introZh": "光翊設計工作室專注於 3D 模擬圖、電腦動畫與美術設計製作。從建築、土木工程、室內、景觀到 3C 產品開發,我們把還停留在圖面與模型階段的設計,轉譯成客戶一眼就看懂的畫面。累積二十年 3ds Max 與 SketchUp 實務經驗,熟悉工程端的圖說與作業流程,溝通不必從頭解釋;交件準時、修改回應快,是設計團隊與業主之間最直接的溝通介面。",
   "introEn": "STUDIO HIKARI produces 3D visualization, animation, and design imagery for architecture, civil engineering, interiors, landscape, and product development. We turn drawings and models into images a client can read at a glance. Two decades of production experience in 3ds Max and SketchUp — and a working knowledge of engineering drawings and delivery schedules — means we speak your team's language from the first briefing. Delivered on time, revised fast.",
-
   "email": "goakuma0725@gmail.com",
   "phone": "02-2242-4711",
   "mobile": "0920-415-981",
@@ -19,14 +11,17 @@
   "addressZh": "新北市中和區復興路268號16F-12",
   "addressEn": "16F-12, No. 268, Fuxing Rd., Zhonghe Dist., New Taipei City, Taiwan",
   "taxId": "29318651",
-  "hours": "",
-
+  "portfolioPdf": "/downloads/studio-hikari-portfolio.pdf",
   "social": {
     "instagram": "",
     "facebook": "",
     "behance": ""
   },
-
-  "portfolioPdf": "/downloads/studio-hikari-portfolio.pdf",
+  "hours": "",
+  "domain": "nerdibility.com",
+  "name": "光翊設計工作室",
+  "nameEn": "STUDIO HIKARI",
+  "shortName": "光翊設計",
+  "url": "https://nerdibility.com",
   "ogImage": "/og-default.jpg"
 }
