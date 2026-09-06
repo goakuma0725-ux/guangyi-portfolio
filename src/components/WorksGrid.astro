@@ -83,7 +83,7 @@ const domainCounts = domains.map((d) => works.filter((w) => w.data.domain.some((
     vertical-align: super;
   }
   :global(.work-card) {
-    transition: opacity 200ms ease;
+    transition: opacity 200ms ease, transform 300ms ease-out;
   }
 </style>
 
@@ -96,13 +96,13 @@ const domainCounts = domains.map((d) => works.filter((w) => w.data.domain.some((
     const clearBtns = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-clear]'));
 
     type Axis = 'domain' | 'service';
-    type State = { domain: string[]; service: string[] };
+    type State = { domain: string; service: string };
 
     function parseQuery(): State {
       const params = new URLSearchParams(location.search);
       return {
-        domain: (params.get('domain') || '').split(',').filter(Boolean),
-        service: (params.get('service') || '').split(',').filter(Boolean),
+        domain: params.get('domain') || '',
+        service: params.get('service') || '',
       };
     }
 
@@ -111,32 +111,29 @@ const domainCounts = domains.map((d) => works.filter((w) => w.data.domain.some((
     function cardMatches(card: HTMLElement, s: State) {
       const d = (card.dataset.domain || '').split(',');
       const sv = (card.dataset.service || '').split(',');
-      const domainOk = s.domain.length === 0 || s.domain.some((v) => d.includes(v));
-      const serviceOk = s.service.length === 0 || s.service.some((v) => sv.includes(v));
+      const domainOk = !s.domain || d.includes(s.domain);
+      const serviceOk = !s.service || sv.includes(s.service);
       return domainOk && serviceOk;
     }
 
-    // Count for a single tag ignores what else is selected within the SAME axis
-    // (sibling selections don't inflate each other's counts, matching the spec's
-    // static example where per-domain counts sum to the total) but still respects
-    // the OTHER axis's active filter.
+    // Each axis is single-select (picking a tag replaces the previous one,
+    // it doesn't accumulate), so a tag's count only ever needs to try that
+    // one value against the OTHER axis's current selection.
     function countForTag(axis: Axis, value: string) {
-      const trial: State = { domain: state.domain, service: state.service };
-      trial[axis] = [value];
+      const trial: State = { ...state, [axis]: value };
       return cards.filter((c) => cardMatches(c, trial)).length;
     }
 
     function updateURL() {
       const params = new URLSearchParams();
-      if (state.domain.length) params.set('domain', state.domain.join(','));
-      if (state.service.length) params.set('service', state.service.join(','));
+      if (state.domain) params.set('domain', state.domain);
+      if (state.service) params.set('service', state.service);
       const qs = params.toString();
       history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
     }
 
     function countWithAxisCleared(axis: Axis) {
-      const trial: State = { domain: [...state.domain], service: [...state.service] };
-      trial[axis] = [];
+      const trial: State = { ...state, [axis]: '' };
       return cards.filter((c) => cardMatches(c, trial)).length;
     }
 
@@ -145,7 +142,7 @@ const domainCounts = domains.map((d) => works.filter((w) => w.data.domain.some((
         const axis = btn.dataset.axis as Axis;
         const value = btn.dataset.value || '';
         const isAll = value === '';
-        const active = isAll ? state[axis].length === 0 : state[axis].includes(value);
+        const active = isAll ? state[axis] === '' : state[axis] === value;
         btn.setAttribute('aria-pressed', String(active));
         const count = isAll ? countWithAxisCleared(axis) : countForTag(axis, value);
         const countEl = btn.querySelector('[data-count]');
@@ -189,21 +186,16 @@ const domainCounts = domains.map((d) => works.filter((w) => w.data.domain.some((
         if (btn.disabled) return;
         const axis = btn.dataset.axis as Axis;
         const value = btn.dataset.value || '';
-        if (value === '') {
-          state[axis] = [];
-        } else {
-          const arr = state[axis];
-          const idx = arr.indexOf(value);
-          if (idx === -1) arr.push(value);
-          else arr.splice(idx, 1);
-        }
+        // Single-select per axis: picking a tag replaces whatever was
+        // selected there; clicking the active tag again clears back to "all".
+        state[axis] = state[axis] === value ? '' : value;
         render(true);
       });
     });
 
     clearBtns.forEach((btn) =>
       btn.addEventListener('click', () => {
-        state = { domain: [], service: [] };
+        state = { domain: '', service: '' };
         render(true);
       })
     );
