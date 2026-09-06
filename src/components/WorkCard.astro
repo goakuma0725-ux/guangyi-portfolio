@@ -14,7 +14,10 @@ const domainLabel = domainEntries.map((d) => (lang === 'en' && d.data.title_en) 
 const alt = `${title} ${domainLabel}`;
 
 const video = work.data.video;
-const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.src);
+// A dedicated short/silent clip for the hover preview, decoupled from the
+// main video link (which is usually a YouTube/Vimeo embed and can't be
+// hover-played inline) — set separately in the CMS's "卡片預覽片段" field.
+const previewSrc = video?.previewClip;
 ---
 
 <button
@@ -37,10 +40,10 @@ const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.sr
       draggable="false"
       class:list={[
         'h-full w-full scale-100 object-cover brightness-100 transition-[transform,filter,opacity] duration-300 ease-out group-hover:scale-[1.04] group-hover:brightness-105',
-        isLocalVideo && 'group-hover:opacity-0',
+        previewSrc && 'group-hover:opacity-0',
       ]}
     />
-    {work.data.cover_clay && !isLocalVideo && (
+    {work.data.cover_clay && !previewSrc && (
       <img
         src={work.data.cover_clay}
         alt=""
@@ -54,10 +57,10 @@ const isLocalVideo = video && !/youtube\.com|youtu\.be|vimeo\.com/.test(video.sr
       />
     )}
 
-    {isLocalVideo && (
+    {previewSrc && (
       <video
         data-hover-preview
-        data-src={video.src}
+        data-src={previewSrc}
         muted
         loop
         playsinline

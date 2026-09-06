@@ -39,6 +39,7 @@ const works = defineCollection({
       z.object({
         src: z.string(),
         poster: optionalBlank(z.string()),
+        previewClip: optionalBlank(z.string()),
       })
     ),
     featured: z.boolean().default(false),

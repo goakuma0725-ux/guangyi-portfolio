@@ -49,6 +49,7 @@ collections:
         fields:
           - { label: "影片路徑或外部連結 (YouTube/Vimeo)", name: "src", widget: "string" }
           - { label: "封面 Poster", name: "poster", widget: "image", required: false }
+          - { label: "卡片預覽片段 (Hover Preview - 選填)", name: "previewClip", widget: "string", required: false, hint: "滑過作品卡片時播放的短版無聲影片路徑,例如 /media/xxx-preview.mp4。跟上面的完整影片連結是分開的檔案,需自行透過 hPanel 檔案管理員上傳到 public_html/media/" }
       - { label: "首頁輪播推薦 (Featured)", name: "featured", widget: "boolean", default: false }
       - { label: "排序 (Order,數字小的在前)", name: "order", widget: "number", default: 0, value_type: "int" }
 
