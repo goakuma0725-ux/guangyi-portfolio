@@ -316,8 +316,20 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
   .result { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid #E2E2DE; }
   .result:last-child { border-bottom: none; }
   .result img { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; background: #eee; flex-shrink: 0; }
-  .result .path { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; word-break: break-all; }
+  .result .path { flex: 1; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; word-break: break-all; }
   .result.fail .path { color: #B4232C; font-family: inherit; }
+  .copy-btn {
+    flex-shrink: 0;
+    background: #fff;
+    color: #111;
+    border: 1px solid #E2E2DE;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .copy-btn:hover { border-color: #111; }
+  .copy-btn.copied { background: #E9B10C; border-color: #E9B10C; }
   .hint { font-size: 13px; color: #6B6B68; margin: 16px 0 0; }
 </style>
 </head>
@@ -337,12 +349,13 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
           <?php if ($r['ok']): ?>
             <img src="<?= h($r['dataUri']) ?>" alt="">
             <div class="path"><?= h($r['path']) ?></div>
+            <button type="button" data-copy="<?= h($r['path']) ?>" class="copy-btn">複製路徑</button>
           <?php else: ?>
             <div class="path"><?= h($r['name']) ?>：<?= h($r['msg']) ?></div>
           <?php endif; ?>
         </div>
       <?php endforeach; ?>
-      <p class="hint">上傳完成。回到後台 → 對應圖片欄位 → 選擇既有檔案，就會看到這些圖片。</p>
+      <p class="hint">上傳完成。回到後台 → 對應圖片欄位 → 選「輸入 URL」→ 貼上剛複製的路徑，不用在清單裡找。</p>
     </div>
   <?php endif; ?>
 
@@ -368,5 +381,20 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
     <button type="submit">上傳並縮圖</button>
   </form>
 </div>
+<script>
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(btn.dataset.copy).then(function () {
+        var original = btn.textContent;
+        btn.textContent = '已複製';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    });
+  });
+</script>
 </body>
 </html>
