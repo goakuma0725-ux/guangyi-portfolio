@@ -349,7 +349,7 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
   <form class="card" method="post" enctype="multipart/form-data">
     <?php if (!$authed): ?>
       <label for="password">密碼</label>
-      <input type="password" id="password" name="password" required autofocus>
+      <input type="text" id="password" name="password" autocomplete="off" required autofocus>
     <?php endif; ?>
 
     <?php if ($authed): ?>
