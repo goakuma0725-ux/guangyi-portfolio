@@ -6,11 +6,12 @@ declare(strict_types=1);
  *
  * Runs entirely on this server (no third-party storage). Resizes the
  * uploaded image here with GD, then commits the small result directly
- * into public/images/uploads/[work-slug]/ — the same tree Sveltia CMS's
- * media library reads from — so the browser never has to push a large
- * raw file straight to GitHub's API — that's what was failing before.
- * The work-slug subfolder keeps each work's images grouped instead of
- * all landing in one flat, ever-growing folder.
+ * into public/images/uploads/ — the same folder Sveltia CMS's media
+ * library reads from — so the browser never has to push a large raw
+ * file straight to GitHub's API — that's what was failing before.
+ * The upload result shows the new file's path with a copy button, to
+ * paste into Sveltia's image field via "輸入 URL" — Sveltia's own asset
+ * picker is one flat, unsorted list, so browsing it doesn't scale.
  */
 
 error_reporting(E_ALL);
@@ -82,24 +83,6 @@ function urlEncodePath(string $path): string
     return implode('/', array_map('rawurlencode', explode('/', $path)));
 }
 
-/** @return string[] sorted work slugs (from src/content/works/*.md filenames) */
-function listWorkSlugs(string $token): array
-{
-    $url = 'https://api.github.com/repos/' . REPO . '/contents/src/content/works?ref=' . BRANCH;
-    $result = githubApiRequest('GET', $url, $token);
-    if ($result['status'] !== 200) {
-        throw new RuntimeException('無法讀取作品清單：HTTP ' . $result['status']);
-    }
-    $slugs = [];
-    foreach ($result['data'] as $item) {
-        if (($item['type'] ?? '') === 'file' && str_ends_with($item['name'] ?? '', '.md')) {
-            $slugs[] = substr($item['name'], 0, -3);
-        }
-    }
-    sort($slugs);
-    return $slugs;
-}
-
 /** @return array{status: int, data: array} */
 function githubApiRequest(string $method, string $url, string $token, ?array $body = null): array
 {
@@ -146,7 +129,7 @@ function commitToGitHub(string $path, string $binary, string $token): void
 }
 
 /** @return array{name: string, ok: bool, path?: string, dataUri?: string, msg?: string} */
-function processAndCommit(array $file, string $githubToken, string $targetDir): array
+function processAndCommit(array $file, string $githubToken): array
 {
     $info = @getimagesize($file['tmp_name']);
     if ($info === false) {
@@ -207,7 +190,7 @@ function processAndCommit(array $file, string $githubToken, string $targetDir): 
     imagedestroy($src);
 
     $filename = safeFilename($file['name'], $ext);
-    $path = $targetDir . '/' . $filename;
+    $path = TARGET_DIR . '/' . $filename;
     commitToGitHub($path, $binary, $githubToken);
 
     return [
@@ -221,45 +204,32 @@ function processAndCommit(array $file, string $githubToken, string $targetDir): 
 $authed = ($_SESSION['authed'] ?? false) === true;
 $error = null;
 $results = [];
-$workSlugs = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$authed) {
-    $postedPassword = (string) ($_POST['password'] ?? '');
-    if ($postedPassword !== '' && hash_equals($secret['password'], $postedPassword)) {
-        $_SESSION['authed'] = true;
-        $authed = true;
-    } else {
-        $error = '密碼錯誤';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$authed) {
+        $postedPassword = (string) ($_POST['password'] ?? '');
+        if ($postedPassword !== '' && hash_equals($secret['password'], $postedPassword)) {
+            $_SESSION['authed'] = true;
+            $authed = true;
+        } else {
+            $error = '密碼錯誤';
+        }
     }
-}
 
-if ($authed) {
-    try {
-        $workSlugs = listWorkSlugs($secret['github_token']);
-    } catch (Throwable $e) {
-        $error = $error ?? $e->getMessage();
-    }
-}
-
-if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])) {
-    // Only trust a work slug that's actually in the freshly-fetched list —
-    // this value ends up in a GitHub file path, so it must never be taken
-    // from raw POST input unchecked.
-    $postedWork = (string) ($_POST['work'] ?? '');
-    $targetDir = in_array($postedWork, $workSlugs, true) ? TARGET_DIR . '/' . $postedWork : TARGET_DIR;
-
-    foreach (normalizeFilesArray($_FILES['images']) as $file) {
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            if ($file['error'] === UPLOAD_ERR_NO_FILE && $file['name'] === '') {
+    if ($authed && isset($_FILES['images'])) {
+        foreach (normalizeFilesArray($_FILES['images']) as $file) {
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                if ($file['error'] === UPLOAD_ERR_NO_FILE && $file['name'] === '') {
+                    continue;
+                }
+                $results[] = ['name' => $file['name'], 'ok' => false, 'msg' => uploadErrorMessage($file['error'])];
                 continue;
             }
-            $results[] = ['name' => $file['name'], 'ok' => false, 'msg' => uploadErrorMessage($file['error'])];
-            continue;
-        }
-        try {
-            $results[] = processAndCommit($file, $secret['github_token'], $targetDir);
-        } catch (Throwable $e) {
-            $results[] = ['name' => $file['name'], 'ok' => false, 'msg' => $e->getMessage()];
+            try {
+                $results[] = processAndCommit($file, $secret['github_token']);
+            } catch (Throwable $e) {
+                $results[] = ['name' => $file['name'], 'ok' => false, 'msg' => $e->getMessage()];
+            }
         }
     }
 }
@@ -292,7 +262,7 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
     margin-bottom: 20px;
   }
   label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  input[type="password"], input[type="file"], select {
+  input[type="password"], input[type="file"] {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #E2E2DE;
@@ -363,16 +333,6 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])
     <?php if (!$authed): ?>
       <label for="password">密碼</label>
       <input type="text" id="password" name="password" autocomplete="off" required autofocus>
-    <?php endif; ?>
-
-    <?php if ($authed): ?>
-      <label for="work">這是哪一筆作品？</label>
-      <select id="work" name="work">
-        <option value="">（不指定，放共用資料夾）</option>
-        <?php foreach ($workSlugs as $slug): ?>
-          <option value="<?= h($slug) ?>"><?= h($slug) ?></option>
-        <?php endforeach; ?>
-      </select>
     <?php endif; ?>
 
     <label for="images">選擇圖片（可多選）</label>
