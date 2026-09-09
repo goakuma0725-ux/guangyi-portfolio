@@ -14,9 +14,9 @@ const isExternal = /youtube\.com|youtu\.be|vimeo\.com/.test(src);
 
 function toEmbedUrl(url: string) {
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
-  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1`;
   const vimeo = url.match(/vimeo\.com\/(\d+)/);
-  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}?autoplay=1&muted=1`;
   return url;
 }
 ---
@@ -28,14 +28,13 @@ function toEmbedUrl(url: string) {
       <iframe
         src={toEmbedUrl(src)}
         class="h-full w-full"
-        loading="lazy"
         title={t.work.video}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
       ></iframe>
     </div>
   ) : (
-    <video controls playsinline preload="none" poster={poster} class="w-full">
+    <video controls playsinline autoplay muted poster={poster} class="w-full">
       <source src={src} type="video/mp4" />
     </video>
   )}

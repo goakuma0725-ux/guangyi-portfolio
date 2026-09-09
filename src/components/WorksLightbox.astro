@@ -117,12 +117,14 @@ const prefix = lang === 'en' ? '/en' : '';
           v.controls = true;
           v.playsInline = true;
           v.autoplay = true;
+          v.muted = true; // browsers block unmuted autoplay
           v.poster = current.video.poster;
           v.className = 'h-full w-full';
           videoWrap.appendChild(v);
         } else {
+          const muteParam = current.video.src.includes('vimeo.com') ? 'muted' : 'mute';
           const iframe = document.createElement('iframe');
-          iframe.src = current.video.src + '?autoplay=1';
+          iframe.src = current.video.src + `?autoplay=1&${muteParam}=1`;
           iframe.className = 'h-full w-full';
           iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
           iframe.allowFullscreen = true;
