@@ -22,10 +22,24 @@ const title = work.data.title;
 const domainLabel = (await getEntries(work.data.domain)).map((d) => d.data.title).join(' · ');
 const serviceLabel = work.data.service.join(' · ');
 const description = `${title}｜${domainLabel}｜${site.name}`;
+
+const workSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: title,
+  description,
+  image: new URL(work.data.cover, site.url).toString(),
+  url: new URL(`/works/${work.id}`, site.url).toString(),
+  keywords: `${domainLabel}, ${serviceLabel}`,
+  creator: { '@type': 'Organization', name: site.name, url: site.url },
+  ...(work.data.year && { dateCreated: String(work.data.year) }),
+};
 ---
 
 <BaseLayout lang="zh-Hant" path={`/works/${work.id}`} title={`${title} ｜ ${site.name} STUDIO HIKARI`} description={description} ogImage={work.data.cover}>
   <article class="mx-auto max-w-[1440px] px-5 py-8 md:px-10">
+    <script type="application/ld+json" set:html={JSON.stringify(workSchema)} />
+
     <a href="/works" class="font-mono-label" style="color:var(--ink-mid)">&larr; {t.work.backToWorks}</a>
 
     <h1 class="mt-4" style="font-size:32px">{title}</h1>

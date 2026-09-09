@@ -23,10 +23,24 @@ const domainEntries = await getEntries(work.data.domain);
 const domainLabel = domainEntries.map((d) => d.data.title_en || d.data.title).join(' · ');
 const serviceLabel = work.data.service.map((s) => SERVICE_LABELS_EN[s]).join(' · ');
 const description = `${title} | ${domainLabel} | ${site.nameEn}`;
+
+const workSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: title,
+  description,
+  image: new URL(work.data.cover, site.url).toString(),
+  url: new URL(`/en/works/${work.id}`, site.url).toString(),
+  keywords: `${domainLabel}, ${serviceLabel}`,
+  creator: { '@type': 'Organization', name: site.nameEn, url: site.url },
+  ...(work.data.year && { dateCreated: String(work.data.year) }),
+};
 ---
 
 <BaseLayout lang="en" path={`/works/${work.id}`} title={`${title} | ${site.nameEn}`} description={description} ogImage={work.data.cover}>
   <article class="mx-auto max-w-[1440px] px-5 py-8 md:px-10">
+    <script type="application/ld+json" set:html={JSON.stringify(workSchema)} />
+
     <a href="/en/works" class="font-mono-label" style="color:var(--ink-mid)">&larr; {t.work.backToWorks}</a>
 
     <h1 class="mt-4" style="font-size:32px">{title}</h1>

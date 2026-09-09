@@ -18,6 +18,24 @@ const zhUrl = new URL(path, site.url).toString();
 const enUrl = new URL(`/en${path}`, site.url).toString();
 const canonical = lang === 'en' ? enUrl : zhUrl;
 const image = new URL(ogImage ?? site.ogImage, site.url).toString();
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  alternateName: site.nameEn,
+  url: site.url,
+  logo: new URL('/favicon.png', site.url).toString(),
+  description: lang === 'en' ? site.introEn : site.introZh,
+  email: site.email,
+  telephone: site.phone,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: lang === 'en' ? site.addressEn : site.addressZh,
+    addressCountry: 'TW',
+  },
+  ...(Object.values(site.social).some(Boolean) && { sameAs: Object.values(site.social).filter(Boolean) }),
+};
 ---
 
 <!doctype html>
@@ -40,6 +58,8 @@ const image = new URL(ogImage ?? site.ogImage, site.url).toString();
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" href="/favicon.png" type="image/png" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
 
     <!-- TODO(§5 字體): self-host Archivo / Noto Sans TC / IBM Plex Mono as subset woff2.
          Using Google Fonts CDN as an interim so the site is usable before real font files
