@@ -106,10 +106,17 @@ const domainLabels = await Promise.all(
     let raf: number;
     let start = performance.now();
 
-    function render() {
+    function render(skipTransition = false) {
+      if (skipTransition) track.style.transition = 'none';
       track.style.transform = `translateX(-${index * (100 / slides.length)}%)`;
       slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== index)));
       if (counter) counter.textContent = pad(index + 1);
+      if (skipTransition) {
+        // force reflow so the instant jump actually applies before the
+        // transition (set via the track's own class) is turned back on
+        void track.offsetHeight;
+        track.style.transition = '';
+      }
     }
 
     // Subtle Ken Burns zoom on the active slide only, timed to finish right
@@ -131,8 +138,13 @@ const domainLabels = await Promise.all(
     function goTo(next: number) {
       const prevIndex = index;
       index = (next + slides.length) % slides.length;
+      // goTo is only ever called with prevIndex ± 1, so a jump bigger than
+      // that means it wrapped around the end — skip the slide transition
+      // for that one jump so it cuts instead of visibly rewinding through
+      // every slide in between.
+      const wrapped = Math.abs(index - prevIndex) > 1;
       setZoom(prevIndex, false);
-      render();
+      render(wrapped);
       setZoom(index, true);
       if (progress) progress.style.width = '0%';
       start = performance.now();
