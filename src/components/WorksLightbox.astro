@@ -30,6 +30,13 @@ const prefix = lang === 'en' ? '/en' : '';
     </button>
     <img data-lightbox-main src="" alt="" class="max-h-full max-w-full object-contain" draggable="false" />
     <div data-lightbox-video hidden class="aspect-video max-h-full w-full max-w-4xl"></div>
+    <div
+      data-lightbox-sound-hint
+      hidden
+      class="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 cursor-pointer whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-opacity duration-500"
+    >
+      🔇 {t.lightbox.soundHint}
+    </div>
     <button type="button" data-lightbox-next aria-label={t.lightbox.next} class="absolute right-0 z-10 p-2 text-white/60 hover:text-white md:right-2">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="1.5" /></svg>
     </button>
@@ -45,6 +52,7 @@ const prefix = lang === 'en' ? '/en' : '';
 
     const mainImg = overlay.querySelector('[data-lightbox-main]');
     const videoWrap = overlay.querySelector('[data-lightbox-video]');
+    const soundHint = overlay.querySelector('[data-lightbox-sound-hint]');
     const thumbsEl = overlay.querySelector('[data-lightbox-thumbs]');
     const titleEl = overlay.querySelector('[data-lightbox-title]');
     const fullLink = overlay.querySelector('[data-lightbox-fulllink]');
@@ -54,6 +62,30 @@ const prefix = lang === 'en' ? '/en' : '';
 
     const cache = new Map();
     let current = null; // { images, video, index } — slide 0 is the video when present, images follow after
+
+    const SOUND_HINT_KEY = 'hikari-video-sound-hint-shown';
+    let hintTimer;
+
+    function hideSoundHint() {
+      clearTimeout(hintTimer);
+      soundHint.style.opacity = '0';
+      soundHint.hidden = true;
+      soundHint.onclick = null;
+    }
+
+    // Shown once per browsing session, the first time a visitor hits a video
+    // slide — muted autoplay otherwise gives no clue that sound is available.
+    function maybeShowSoundHint(videoEl) {
+      if (sessionStorage.getItem(SOUND_HINT_KEY)) return;
+      sessionStorage.setItem(SOUND_HINT_KEY, '1');
+      soundHint.hidden = false;
+      soundHint.style.opacity = '1';
+      soundHint.onclick = () => {
+        if (videoEl) videoEl.muted = false; // local video: hint doubles as an unmute button
+        hideSoundHint();
+      };
+      hintTimer = setTimeout(hideSoundHint, 5000);
+    }
 
     function slideCount() {
       return (current.video ? 1 : 0) + current.images.length;
@@ -121,6 +153,7 @@ const prefix = lang === 'en' ? '/en' : '';
           v.poster = current.video.poster;
           v.className = 'h-full w-full';
           videoWrap.appendChild(v);
+          maybeShowSoundHint(v);
         } else {
           const muteParam = current.video.src.includes('vimeo.com') ? 'muted' : 'mute';
           const iframe = document.createElement('iframe');
@@ -129,6 +162,7 @@ const prefix = lang === 'en' ? '/en' : '';
           iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
           iframe.allowFullscreen = true;
           videoWrap.appendChild(iframe);
+          maybeShowSoundHint(null);
         }
       } else {
         videoWrap.hidden = true;
@@ -136,6 +170,7 @@ const prefix = lang === 'en' ? '/en' : '';
         mainImg.hidden = false;
         const imgIndex = current.video ? current.index - 1 : current.index;
         mainImg.src = current.images[imgIndex].full;
+        hideSoundHint();
       }
       renderThumbs();
     }
@@ -144,6 +179,7 @@ const prefix = lang === 'en' ? '/en' : '';
       overlay.hidden = true;
       document.body.style.overflow = '';
       videoWrap.innerHTML = '';
+      hideSoundHint();
       current = null;
     }
 

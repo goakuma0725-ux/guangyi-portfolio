@@ -30,7 +30,8 @@
   "lightbox": {
     "close": "Close",
     "prev": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "soundHint": "Muted playback — tap the speaker icon to turn on sound"
   },
   "contact": {
     "title": "LINE or a call is the fastest way to reach us",
