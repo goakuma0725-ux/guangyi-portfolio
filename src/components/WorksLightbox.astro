@@ -33,7 +33,7 @@ const prefix = lang === 'en' ? '/en' : '';
     <div
       data-lightbox-sound-hint
       hidden
-      class="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 cursor-pointer whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-opacity duration-500"
+      class="absolute right-4 top-4 z-20 cursor-pointer whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-opacity duration-500"
     >
       🔇 {t.lightbox.soundHint}
     </div>
@@ -61,10 +61,25 @@ const prefix = lang === 'en' ? '/en' : '';
     const nextBtn = overlay.querySelector('[data-lightbox-next]');
 
     const cache = new Map();
-    let current = null; // { images, video, index } — slide 0 is the video when present, images follow after
+    let current = null; // { id, images, video, index } — slide 0 is the video when present, images follow after
 
-    const SOUND_HINT_KEY = 'hikari-video-sound-hint-shown';
+    const SOUND_HINT_KEY = 'hikari-video-sound-hint-seen';
     let hintTimer;
+
+    function hasSeenSoundHint(id) {
+      try {
+        return JSON.parse(sessionStorage.getItem(SOUND_HINT_KEY) || '[]').includes(id);
+      } catch {
+        return false;
+      }
+    }
+
+    function markSoundHintSeen(id) {
+      try {
+        const seen = JSON.parse(sessionStorage.getItem(SOUND_HINT_KEY) || '[]');
+        if (!seen.includes(id)) sessionStorage.setItem(SOUND_HINT_KEY, JSON.stringify([...seen, id]));
+      } catch {}
+    }
 
     function hideSoundHint() {
       clearTimeout(hintTimer);
@@ -73,11 +88,11 @@ const prefix = lang === 'en' ? '/en' : '';
       soundHint.onclick = null;
     }
 
-    // Shown once per browsing session, the first time a visitor hits a video
-    // slide — muted autoplay otherwise gives no clue that sound is available.
-    function maybeShowSoundHint(videoEl) {
-      if (sessionStorage.getItem(SOUND_HINT_KEY)) return;
-      sessionStorage.setItem(SOUND_HINT_KEY, '1');
+    // Shown the first time each individual work's video plays this browsing
+    // session — muted autoplay otherwise gives no clue that sound is available.
+    function maybeShowSoundHint(videoEl, id) {
+      if (hasSeenSoundHint(id)) return;
+      markSoundHintSeen(id);
       soundHint.hidden = false;
       soundHint.style.opacity = '1';
       soundHint.onclick = () => {
@@ -153,7 +168,7 @@ const prefix = lang === 'en' ? '/en' : '';
           v.poster = current.video.poster;
           v.className = 'h-full w-full';
           videoWrap.appendChild(v);
-          maybeShowSoundHint(v);
+          maybeShowSoundHint(v, current.id);
         } else {
           const muteParam = current.video.src.includes('vimeo.com') ? 'muted' : 'mute';
           const iframe = document.createElement('iframe');
@@ -162,7 +177,7 @@ const prefix = lang === 'en' ? '/en' : '';
           iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
           iframe.allowFullscreen = true;
           videoWrap.appendChild(iframe);
-          maybeShowSoundHint(null);
+          maybeShowSoundHint(null, current.id);
         }
       } else {
         videoWrap.hidden = true;
@@ -206,7 +221,7 @@ const prefix = lang === 'en' ? '/en' : '';
 
       titleEl.textContent = lang === 'en' ? data.titleEn : data.title;
       fullLink.href = `${prefix}/works/${data.id}`;
-      current = { images: data.images, video: data.video, index: 0 };
+      current = { id, images: data.images, video: data.video, index: 0 };
       show(0);
     }
 
