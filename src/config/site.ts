@@ -29,6 +29,7 @@ export const site = raw as {
   };
   portfolioPdf: string;
   ogImage: string;
+  thanksList: string[];
 };
 
 // tel: links need the raw digits with country code, no separators.

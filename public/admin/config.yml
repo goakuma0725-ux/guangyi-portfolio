@@ -110,3 +110,4 @@ collections:
               - { label: "Instagram", name: "instagram", widget: "string", required: false }
               - { label: "Facebook", name: "facebook", widget: "string", required: false }
               - { label: "Behance", name: "behance", widget: "string", required: false }
+          - { label: "感謝名單 (合作客戶/夥伴)", name: "thanksList", widget: "list", required: false }
