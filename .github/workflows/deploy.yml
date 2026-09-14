@@ -5,6 +5,14 @@ on:
     branches:
       - main
 
+# Only one deploy at a time — queue the rest instead of racing them.
+# Hostinger's FTP only accepts one connection at once, so a burst of quick
+# commits (e.g. uploading several images back to back) was firing off
+# multiple parallel deploys that collided and failed the FTP step.
+concurrency:
+  group: deploy-to-hostinger
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
