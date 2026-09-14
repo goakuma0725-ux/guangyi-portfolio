@@ -29,13 +29,15 @@ const prefix = lang === 'en' ? '/en' : '';
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.5" /></svg>
     </button>
     <img data-lightbox-main src="" alt="" class="max-h-full max-w-full object-contain" draggable="false" />
-    <div data-lightbox-video hidden class="aspect-video max-h-full w-full max-w-4xl"></div>
-    <div
-      data-lightbox-sound-hint
-      hidden
-      class="absolute right-4 bottom-4 z-20 cursor-pointer whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-opacity duration-500"
-    >
-      🔇 {t.lightbox.soundHint}
+    <div data-lightbox-video-wrap hidden class="relative aspect-video max-h-full w-full max-w-4xl">
+      <div data-lightbox-video class="h-full w-full"></div>
+      <div
+        data-lightbox-sound-hint
+        hidden
+        class="absolute right-3 bottom-3 z-20 cursor-pointer whitespace-nowrap rounded-full bg-black/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-opacity duration-500"
+      >
+        🔇 {t.lightbox.soundHint}
+      </div>
     </div>
     <button type="button" data-lightbox-next aria-label={t.lightbox.next} class="absolute right-0 z-10 p-2 text-white/60 hover:text-white md:right-2">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="1.5" /></svg>
@@ -51,6 +53,7 @@ const prefix = lang === 'en' ? '/en' : '';
     if (!overlay) return;
 
     const mainImg = overlay.querySelector('[data-lightbox-main]');
+    const videoWrapOuter = overlay.querySelector('[data-lightbox-video-wrap]');
     const videoWrap = overlay.querySelector('[data-lightbox-video]');
     const soundHint = overlay.querySelector('[data-lightbox-sound-hint]');
     const thumbsEl = overlay.querySelector('[data-lightbox-thumbs]');
@@ -137,7 +140,7 @@ const prefix = lang === 'en' ? '/en' : '';
       if (isVideoSlide) {
         mainImg.hidden = true;
         mainImg.src = '';
-        videoWrap.hidden = false;
+        videoWrapOuter.hidden = false;
         videoWrap.innerHTML = '';
         if (current.video.type === 'local') {
           const v = document.createElement('video');
@@ -161,7 +164,7 @@ const prefix = lang === 'en' ? '/en' : '';
           showSoundHint(null);
         }
       } else {
-        videoWrap.hidden = true;
+        videoWrapOuter.hidden = true;
         videoWrap.innerHTML = '';
         mainImg.hidden = false;
         const imgIndex = current.video ? current.index - 1 : current.index;
@@ -184,7 +187,7 @@ const prefix = lang === 'en' ? '/en' : '';
       overlay.hidden = false;
       titleEl.textContent = '…';
       mainImg.src = '';
-      videoWrap.hidden = true;
+      videoWrapOuter.hidden = true;
       videoWrap.innerHTML = '';
       thumbsEl.innerHTML = '';
 
