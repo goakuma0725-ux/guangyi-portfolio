@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "postinstall": "node scripts/generate-static-assets.mjs",
-    "prebuild": "node scripts/generate-static-assets.mjs"
+    "prebuild": "node scripts/generate-static-assets.mjs && node scripts/make-thumbnails.mjs",
+    "predev": "node scripts/make-thumbnails.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0",

@@ -1,5 +1,6 @@
 ---
 import { getEntries, type CollectionEntry } from 'astro:content';
+import { cardThumb } from '../config/thumbs';
 
 interface Props {
   work: CollectionEntry<'works'>;
@@ -31,7 +32,7 @@ const previewSrc = video?.previewClip;
 >
   <div class="work-media relative aspect-[4/3] overflow-hidden">
     <img
-      src={work.data.cover}
+      src={cardThumb(work.data.cover)}
       alt={alt}
       width="640"
       height="480"
@@ -45,7 +46,7 @@ const previewSrc = video?.previewClip;
     />
     {work.data.cover_clay && !previewSrc && (
       <img
-        src={work.data.cover_clay}
+        src={cardThumb(work.data.cover_clay)}
         alt=""
         width="640"
         height="480"

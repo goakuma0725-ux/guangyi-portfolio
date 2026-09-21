@@ -12,6 +12,9 @@ npm-debug.log*
 .env
 .env.production
 
+# card thumbnails — generated from public/images/uploads/ by scripts/make-thumbnails.mjs on every build
+public/images/thumbs/
+
 # media-tool secret (password + GitHub token) — lives only on Hostinger, never in git
 public/media-tool/secret.php
 
