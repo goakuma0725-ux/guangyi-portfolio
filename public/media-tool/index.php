@@ -337,11 +337,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <label for="images">選擇圖片（可多選）</label>
     <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required>
+    <p class="hint" id="rename-hint" style="display:none">已自動移除檔名中的特殊符號（例如分號），避免主機防護擋下上傳。</p>
 
     <button type="submit">上傳並縮圖</button>
   </form>
 </div>
 <script>
+  // Filenames from video editors (e.g. After Effects timecode exports like
+  // "Comp 1 (0;00;46;04).jpg") can contain characters that Hostinger's WAF
+  // blocks with a 403 before the request ever reaches PHP — semicolons in
+  // particular. Strip the risky characters client-side, before the file is
+  // even sent, so the upload just works instead of failing opaquely.
+  (function () {
+    var input = document.getElementById('images');
+    var hint = document.getElementById('rename-hint');
+    if (!input) return;
+
+    input.addEventListener('change', function () {
+      var dt = new DataTransfer();
+      var renamed = false;
+      Array.from(input.files).forEach(function (file) {
+        var safeName = file.name.replace(/[;<>:"|?*\x00-\x1f]/g, '-');
+        if (safeName !== file.name) {
+          renamed = true;
+          file = new File([file], safeName, { type: file.type, lastModified: file.lastModified });
+        }
+        dt.items.add(file);
+      });
+      input.files = dt.files;
+      if (hint) hint.style.display = renamed ? 'block' : 'none';
+    });
+  })();
+
   document.querySelectorAll('[data-copy]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       navigator.clipboard.writeText(btn.dataset.copy).then(function () {
