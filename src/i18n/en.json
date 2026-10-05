@@ -46,8 +46,12 @@
     "call": "Call",
     "mapLink": "Open in Google Maps"
   },
+  "worksIndex": {
+    "description": "Portfolio of STUDIO HIKARI: 3D renderings and computer animation for architecture, civil engineering, interiors, landscape and products. Browse by field."
+  },
   "about": {
     "title": "About Studio Hikari / Contact",
+    "description": "About STUDIO HIKARI, a 3D visualization and animation studio with two decades of 3ds Max and SketchUp experience. Contact us by LINE, phone or email.",
     "brandsTitle": "Partner Brands",
     "toolsTitle": "Skills & Tools",
     "contactTitle": "Contact Information",
@@ -56,6 +60,7 @@
   },
   "services": {
     "title": "Services",
+    "description": "STUDIO HIKARI services: architecture, engineering, interior, landscape and product visualization, with required inputs, deliverables and timelines.",
     "viewWorks": "View works in this domain",
     "scenario": "When it fits",
     "needed": "What we need from you",
@@ -64,6 +69,7 @@
   },
   "faq": {
     "title": "FAQ",
+    "description": "Before you start: how a project begins, revision rounds, files we need from you, delivery formats, copyright and rush jobs.",
     "subtitle": "Frequently asked questions and collaboration notes"
   },
   "footer": {

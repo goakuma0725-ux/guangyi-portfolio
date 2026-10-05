@@ -15,7 +15,7 @@ const items = entries.map((e) => ({
 const categories = [...new Set(items.map((i) => i.category))];
 ---
 
-<BaseLayout lang="en" path="/faq" title={`${t.faq.title} | ${site.nameEn}`} description={site.introEn}>
+<BaseLayout lang="en" path="/faq" title={`${t.faq.title} | ${site.nameEn}`} description={t.faq.description}>
   <div class="mx-auto max-w-[1440px] px-5 py-8 md:px-10">
     <h1 style="font-size:32px">{t.faq.title}</h1>
     <p class="font-mono-label mt-2" style="color:var(--ink-mid)">{t.faq.subtitle}</p>

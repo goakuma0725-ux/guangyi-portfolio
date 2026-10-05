@@ -46,8 +46,12 @@
     "call": "撥打",
     "mapLink": "在 Google 地圖上開啟"
   },
+  "worksIndex": {
+    "description": "光翊設計工作室的作品集：建築、土木工程、室內、景觀與產品的 3D 模擬圖與電腦動畫，可依領域篩選瀏覽。"
+  },
   "about": {
     "title": "關於光翊 / 聯絡我們",
+    "description": "認識光翊設計工作室：專注 3D 模擬圖、電腦動畫與美術設計，累積二十年 3ds Max 與 SketchUp 實務經驗。LINE、電話、Email 與辦公室位置也在這一頁。",
     "brandsTitle": "合作品牌",
     "toolsTitle": "能力與工具",
     "contactTitle": "聯絡資訊",
@@ -56,6 +60,7 @@
   },
   "services": {
     "title": "服務項目",
+    "description": "光翊設計工作室的服務項目：建築設計、工程模擬、室內設計、景觀模擬與產品模擬，說明各類適用情境、需提供的資料、交付物與工期。",
     "viewWorks": "查看此領域作品",
     "scenario": "適用情境",
     "needed": "需要業主提供",
@@ -64,6 +69,7 @@
   },
   "faq": {
     "title": "常見問題",
+    "description": "合作前常見問題：如何開始案子、修改次數、需提供的檔案、交付格式、著作權歸屬與急件處理。",
     "subtitle": "常見問題與合作須知"
   },
   "footer": {
