@@ -28,7 +28,7 @@ const year = new Date().getFullYear();
     <div class="font-mono-label grid grid-cols-3 gap-6 sm:gap-12" style="color:var(--ink-mid)">
       <div class="space-y-1">
         <p class="mb-2" style="color:var(--ink)">CONTACT</p>
-        {site.lineId && <div>LINE：<span class="normal-case">{site.lineId.replace(/^@?/, '@')}</span></div>}
+        {site.lineId && <div>LINE：<span class="normal-case">{site.lineId}</span></div>}
         {site.email && <div><a href={`mailto:${site.email}`} class="normal-case hover:[color:var(--accent)]">{site.email}</a></div>}
         {site.phone && <div><a href={telHref(site.phone)} class="hover:[color:var(--accent)]">{site.phone}</a></div>}
       </div>
