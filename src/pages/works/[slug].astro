@@ -6,6 +6,7 @@ import VideoBlock from '../../components/VideoBlock.astro';
 import WorkIntro from '../../components/WorkIntro.astro';
 import strings_zh from '../../i18n/zh.json';
 import { site } from '../../config/site';
+import { excerpt } from '../../config/excerpt';
 
 export async function getStaticPaths() {
   const works = await getCollection('works');
@@ -22,7 +23,8 @@ const next = allWorks[(idx + 1) % allWorks.length];
 const title = work.data.title;
 const domainLabel = (await getEntries(work.data.domain)).map((d) => d.data.title).join(' · ');
 const serviceLabel = work.data.service.join(' · ');
-const description = `${title}｜${domainLabel}｜${site.name}`;
+const introText = work.data.intro?.trim();
+const description = introText ? excerpt(introText, 80) : `${title}｜${domainLabel}｜${site.name}`;
 
 const workSchema = {
   '@context': 'https://schema.org',
