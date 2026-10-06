@@ -34,6 +34,8 @@ const works = defineCollection({
     year: optionalBlank(z.number()),
     cover: z.string(),
     cover_clay: optionalBlank(z.string()),
+    intro: optionalBlank(z.string()),
+    intro_en: optionalBlank(z.string()),
     gallery: z.array(z.string()).optional(),
     video: optionalBlank(
       z.object({

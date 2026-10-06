@@ -37,6 +37,8 @@ collections:
       - { label: "年份 (Year)", name: "year", widget: "number", required: false, value_type: "int" }
       - { label: "封面圖 (Cover)", name: "cover", widget: "image" }
       - { label: "白模圖 (Clay - 選填)", name: "cover_clay", widget: "image", required: false, hint: "命名建議 cover_clay.jpg,用於卡片 hover 對照效果" }
+      - { label: "作品介紹 (Intro - 選填)", name: "intro", widget: "text", required: false, hint: "顯示在作品頁封面圖下方。可以只寫一兩句,也可以寫幾段,段落之間空一行;不填就不會顯示。" }
+      - { label: "英文作品介紹 (Intro EN - 選填)", name: "intro_en", widget: "text", required: false, hint: "英文版作品頁使用。不填的話,英文版會直接顯示上面的中文介紹。" }
       - label: "作品圖庫 (Gallery)"
         name: "gallery"
         widget: "list"

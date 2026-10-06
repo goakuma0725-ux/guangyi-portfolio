@@ -3,6 +3,7 @@ import { getCollection, getEntries } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GalleryLightbox from '../../components/GalleryLightbox.astro';
 import VideoBlock from '../../components/VideoBlock.astro';
+import WorkIntro from '../../components/WorkIntro.astro';
 import strings_zh from '../../i18n/zh.json';
 import { site } from '../../config/site';
 
@@ -50,6 +51,8 @@ const workSchema = {
     <div class="work-media mt-6 aspect-[16/9] overflow-hidden border" style="border-color:var(--hairline)">
       <img src={work.data.cover} alt={`${title} ${domainLabel}`} width="1920" height="1080" loading="eager" fetchpriority="high" draggable="false" class="h-full w-full object-cover" />
     </div>
+
+    <WorkIntro text={work.data.intro} />
 
     {work.data.gallery && work.data.gallery.length > 0 && (
       <div class="mt-6">

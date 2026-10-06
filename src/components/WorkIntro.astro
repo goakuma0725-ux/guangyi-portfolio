@@ -1,0 +1,21 @@
+---
+interface Props {
+  text?: string;
+}
+
+const { text } = Astro.props;
+const paragraphs = (text ?? '')
+  .replace(/\r/g, '')
+  .trim()
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+---
+
+{paragraphs.length > 0 && (
+  <div data-work-intro class="mt-6 max-w-[70ch] space-y-4" style="font-size:17px;line-height:1.85">
+    {paragraphs.map((p) => (
+      <p class="whitespace-pre-line">{p}</p>
+    ))}
+  </div>
+)}
